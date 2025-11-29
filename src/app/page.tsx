@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { createSupabaseServerClient } from '@/lib/supabase/server-client';
 import { LogoutButton } from '@/components/logout-button';
 import { Header } from '@/components/header';
-import { ArrowLeftEndOnRectangleIcon, UserPlusIcon } from '@heroicons/react/24/solid';
+import { LogIn, UserPlus } from 'lucide-react';
 
 
 function getAvatarClasses(avatarKey: string | null | undefined): string {
@@ -30,25 +30,25 @@ export default async function HomePage() {
 
   if (!user) {
     // Not logged in: show Log in + Sign up buttons
-   rightSlot = (
-  <>
-    <Link
-      href="/login"
-      className="text-sm px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-md flex items-center gap-2"
-    >
-      <ArrowLeftEndOnRectangleIcon className="w-4 h-4" />
-      Log in
-    </Link>
+    rightSlot = (
+      <>
+        <Link
+          href="/login"
+          className="text-sm px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-md flex items-center gap-2"
+        >
+          <LogIn className="w-4 h-4" />
+          Log in
+        </Link>
 
-    <Link
-      href="/signup"
-      className="text-sm px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-md border border-slate-600 flex items-center gap-2"
-    >
-      <UserPlusIcon className="w-4 h-4" />
-      Sign up
-    </Link>
-  </>
-);
+        <Link
+          href="/signup"
+          className="text-sm px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-md border border-slate-600 flex items-center gap-2"
+        >
+          <UserPlus className="w-4 h-4" />
+          Sign up
+        </Link>
+      </>
+    );
 
   } else {
     // Logged in: show avatar + name + logout

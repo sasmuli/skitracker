@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Header } from '@/components/header';
 
-export default function LoginLayout({ children }: { children: ReactNode }) {
+export default function OnboardingLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <Header />
