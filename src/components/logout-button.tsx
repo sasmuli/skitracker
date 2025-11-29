@@ -1,0 +1,23 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { createSupabaseBrowserClient } from '@/lib/supabase/browser-client';
+
+export function LogoutButton() {
+  const supabase = createSupabaseBrowserClient();
+  const router = useRouter();
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    router.push('/');
+  }
+
+  return (
+    <button
+      onClick={handleLogout}
+      className="text-xs text-slate-400 hover:text-slate-200 underline"
+    >
+      Log out
+    </button>
+  );
+}
