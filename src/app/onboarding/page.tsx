@@ -74,16 +74,16 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="max-w-md mx-auto bg-slate-900 border border-slate-800 rounded-xl p-6 mt-6">
+    <div className="glass-card max-w-md mx-auto mt-6 animate-fade-in">
       <h1 className="text-lg font-semibold mb-4">Set up your profile</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-1">
-          <label className="text-xs text-slate-400">Display name</label>
+          <label className="label">Display name</label>
           <input
             type="text"
             required
-            className="w-full px-3 py-2 rounded-md bg-slate-950 border border-slate-700 text-sm text-slate-100"
+            className="input"
             placeholder="e.g. Samuli, SkiDad, PowderQueen"
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
@@ -91,17 +91,17 @@ export default function OnboardingPage() {
         </div>
 
         <div className="space-y-2">
-          <label className="text-xs text-slate-400">Choose an avatar</label>
+          <label className="label">Choose an avatar</label>
           <div className="grid grid-cols-4 gap-3">
             {AVATAR_OPTIONS.map((option) => (
               <button
                 key={option.id}
                 type="button"
                 onClick={() => setAvatar(option.id)}
-                className={`flex flex-col items-center gap-1 p-2 rounded-lg border ${
+                className={`flex flex-col items-center gap-1 p-2 rounded-lg border transition-all ${
                   avatar === option.id
-                    ? 'border-blue-500 bg-slate-800'
-                    : 'border-slate-700 bg-slate-900'
+                    ? 'border-[var(--color-accent)] bg-[var(--color-surface)]'
+                    : 'border-[var(--color-border)] bg-transparent hover:border-[var(--color-border-hover)]'
                 }`}
               >
                 <div
@@ -126,7 +126,7 @@ export default function OnboardingPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-500 disabled:opacity-60 text-sm font-medium"
+          className="btn btn-primary w-full"
         >
           {loading ? 'Saving...' : 'Continue'}
         </button>

@@ -8,14 +8,18 @@ import { LogIn, UserPlus } from 'lucide-react';
 function getAvatarClasses(avatarKey: string | null | undefined): string {
   switch (avatarKey) {
     case 'green':
-      return 'bg-emerald-500';
+      return 'avatar-green';
     case 'orange':
-      return 'bg-orange-500';
+      return 'avatar-orange';
     case 'purple':
-      return 'bg-purple-500';
+      return 'avatar-purple';
+    case 'cyan':
+      return 'avatar-cyan';
+    case 'pink':
+      return 'avatar-pink';
     case 'blue':
     default:
-      return 'bg-blue-500';
+      return 'avatar-blue';
   }
 }
 
@@ -34,7 +38,7 @@ export default async function HomePage() {
       <>
         <Link
           href="/login"
-          className="text-sm px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-md flex items-center gap-2"
+          className="btn btn-primary"
         >
           <LogIn className="w-4 h-4" />
           Log in
@@ -42,7 +46,7 @@ export default async function HomePage() {
 
         <Link
           href="/signup"
-          className="text-sm px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-md border border-slate-600 flex items-center gap-2"
+          className="btn btn-secondary"
         >
           <UserPlus className="w-4 h-4" />
           Sign up
@@ -65,10 +69,10 @@ export default async function HomePage() {
     rightSlot = (
       <>
         <div className="flex items-center gap-2">
-          <div className={`w-8 h-8 rounded-full ${avatarClasses}`} />
+          <div className={`avatar ${avatarClasses}`} />
           <div className="flex flex-col">
             <span className="text-xs font-medium">{displayName}</span>
-            <span className="text-[10px] text-slate-400">{user.email}</span>
+            <span className="text-[10px] text-[var(--color-text-muted)]">{user.email}</span>
           </div>
         </div>
         <LogoutButton />
@@ -77,17 +81,17 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="page-container">
       <Header rightSlot={rightSlot} />
 
       <main className="flex flex-col items-center justify-center py-10">
         <h1 className="text-3xl font-bold mb-4">Welcome to Ski Tracker</h1>
-        <p className="text-slate-400 mb-6">Landing page</p>
+        <p className="mb-6">Landing page</p>
 
         {user ? (
           <Link
             href="/app"
-            className="px-6 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg"
+            className="btn btn-primary"
           >
             Go to App
           </Link>

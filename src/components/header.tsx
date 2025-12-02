@@ -7,7 +7,7 @@ type HeaderProps = {
 
 export function Header({ rightSlot }: HeaderProps) {
   return (
-    <header className="border-b border-slate-800 px-4 h-16 flex items-center justify-between gap-4">
+    <header className="glass-header px-4 h-16 flex items-center justify-between gap-4">
       {/* Left: main nav */}
       <nav className="flex items-center gap-4 text-sm text-slate-300">
         <Link href="/" className="hover:text-white">
