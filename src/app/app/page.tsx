@@ -3,6 +3,8 @@ export default function AppHome() {
     <div className="p-6">
       <h1 className="text-xl font-semibold">Welcome to Ski Tracker</h1>
       <p>Your journey starts here.</p>
+      <p>This is user dashboard page</p>
+
     </div>
   );
 }

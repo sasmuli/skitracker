@@ -80,9 +80,9 @@ export default async function HomePage() {
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <Header rightSlot={rightSlot} />
 
-      <main className="flex min-h-[calc(100vh-60px)] flex-col items-center justify-center">
+      <main className="flex flex-col items-center justify-center py-10">
         <h1 className="text-3xl font-bold mb-4">Welcome to Ski Tracker</h1>
-        <p className="text-slate-400 mb-6">Track your ski adventures</p>
+        <p className="text-slate-400 mb-6">Landing page</p>
 
         {user ? (
           <Link
