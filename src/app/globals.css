@@ -163,6 +163,18 @@ a:hover {
   box-shadow: 0 0 0 3px var(--color-accent-glow);
 }
 
+/* Styled select arrow */
+.input-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6 8L10 12L14 8' stroke='%23cbd5f5' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1.0rem center;
+  background-size: 14px 14px;
+  padding-right: 3em;
+}
+
 .label {
   display: block;
   font-size: 0.75rem;
