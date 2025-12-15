@@ -4,6 +4,8 @@
 import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createSupabaseBrowserClient } from '@/lib/supabase/browser-client';
+import { PasswordInput } from '@/components/password-input';
+import { Mail } from 'lucide-react';
 
 export default function SignupPage() {
   const supabase = createSupabaseBrowserClient();
@@ -14,6 +16,7 @@ export default function SignupPage() {
 
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [emailSent, setEmailSent] = useState(false);
 
   async function handleSignup(e: FormEvent) {
     e.preventDefault();
@@ -23,6 +26,9 @@ export default function SignupPage() {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/onboarding`,
+      },
     });
 
     setLoading(false);
@@ -32,10 +38,37 @@ export default function SignupPage() {
       return;
     }
 
-    // Redirect to onboarding
+    // Show confirmation message
     if (data.user) {
-      router.push('/app/onboarding'); // use correct path depending on your folders
+      setEmailSent(true);
     }
+  }
+
+  // Show email confirmation message after signup
+  if (emailSent) {
+    return (
+      <div className="glass-card w-full max-w-md space-y-4 animate-fade-in text-center">
+        <div className="flex justify-center">
+          <div className="w-16 h-16 rounded-full bg-sky-500/20 flex items-center justify-center">
+            <Mail className="w-8 h-8 text-sky-400" />
+          </div>
+        </div>
+        <h1 className="text-xl font-semibold">Check your email</h1>
+        <p className="text-sm text-slate-400">
+          We sent a confirmation link to <span className="text-slate-200">{email}</span>
+        </p>
+        <p className="text-xs text-slate-500">
+          Click the link in your email to complete signup and set up your profile.
+        </p>
+        <button
+          type="button"
+          onClick={() => router.push('/login')}
+          className="btn btn-secondary w-full mt-4"
+        >
+          Back to login
+        </button>
+      </div>
+    );
   }
 
   return (
@@ -58,13 +91,11 @@ export default function SignupPage() {
 
       <div className="space-y-1">
         <label className="label">Password</label>
-        <input
-          type="password"
+        <PasswordInput
+          value={password}
+          onChange={setPassword}
           required
           minLength={6}
-          className="input"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
         />
       </div>
 

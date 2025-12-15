@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 import { createSupabaseServerClient } from '@/lib/supabase/server-client';
 import { LogoutButton } from '@/components/logout-button';
 import { Header } from '@/components/header';
@@ -50,15 +51,15 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
       <Header
         rightSlot={
           <>
-            <div className="flex items-center gap-2">
+            <Link href="/app/profile" className="profile-link">
               <div className={`avatar ${avatarClasses}`} />
-              <div className="flex flex-col">
+              <div className="hidden sm:flex flex-col">
                 <span className="text-xs font-medium">{displayName}</span>
                 <span className="text-[10px] text-[var(--color-text-muted)]">
                   {user.email}
                 </span>
               </div>
-            </div>
+            </Link>
 
             <LogoutButton />
           </>

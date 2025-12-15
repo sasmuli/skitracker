@@ -23,18 +23,18 @@ export default function OnboardingPage() {
   const [displayName, setDisplayName] = useState('');
   const [avatar, setAvatar] = useState<string>('blue');
   const [loading, setLoading] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
 
   useEffect(() => {
-    async function loadProfile() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+    async function checkAuthAndLoadProfile() {
+      const { data: { user } } = await supabase.auth.getUser();
 
       if (!user) {
         router.push('/login');
         return;
       }
 
+      // Load existing profile if any
       const { data: profile } = await supabase
         .from('profiles')
         .select('display_name, avatar_url')
@@ -45,9 +45,11 @@ export default function OnboardingPage() {
         if (profile.display_name) setDisplayName(profile.display_name);
         if (profile.avatar_url) setAvatar(profile.avatar_url);
       }
+      
+      setCheckingAuth(false);
     }
 
-    loadProfile();
+    checkAuthAndLoadProfile();
   }, [supabase, router]);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -71,6 +73,14 @@ export default function OnboardingPage() {
 
     setLoading(false);
     router.push('/app');
+  }
+
+  if (checkingAuth) {
+    return (
+      <div className="flex justify-center items-center min-h-[200px]">
+        <p className="text-slate-400 text-sm">Loading...</p>
+      </div>
+    );
   }
 
   return (

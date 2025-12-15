@@ -70,7 +70,7 @@ export default async function HomePage() {
       <>
         <div className="flex items-center gap-2">
           <div className={`avatar ${avatarClasses}`} />
-          <div className="flex flex-col">
+          <div className="hidden sm:flex flex-col">
             <span className="text-xs font-medium">{displayName}</span>
             <span className="text-[10px] text-[var(--color-text-muted)]">{user.email}</span>
           </div>

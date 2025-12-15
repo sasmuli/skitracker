@@ -3,6 +3,7 @@
 import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createSupabaseBrowserClient } from '@/lib/supabase/browser-client';
+import { PasswordInput } from '@/components/password-input';
 
 export default function LoginPage() {
   const supabase = createSupabaseBrowserClient();
@@ -54,12 +55,10 @@ export default function LoginPage() {
 
       <div className="space-y-1">
         <label className="label">Password</label>
-        <input
-          type="password"
-          required
-          className="input"
+        <PasswordInput
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={setPassword}
+          required
         />
       </div>
 
