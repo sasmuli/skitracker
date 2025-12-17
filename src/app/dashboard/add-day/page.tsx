@@ -1,19 +1,13 @@
-// src/app/app/add-day/page.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createSupabaseBrowserClient } from '@/lib/supabase/browser-client';
-import { SnowflakeRating } from '@/components/snowflake-raiting';
+import { SKI_TYPES, type SkiType, type ResortOption } from '@/types';
+import { createSkiDays } from '@/lib/actions';
+import { SnowflakeRating } from '@/components/snowflake-rating';
 import { MultiDatePicker } from '@/components/multi-date-picker';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-
-type Resort = {
-  id: string;
-  name: string;
-};
-
-type SkiType = 'piste' | 'park' | 'freeride' | 'touring' | 'street';
 
 type DayFormData = {
   resortId: string;
@@ -23,14 +17,6 @@ type DayFormData = {
   notes: string;
   selectedTypes: SkiType[];
 };
-
-const SKI_TYPES: { id: SkiType; label: string }[] = [
-  { id: 'piste', label: 'Piste' },
-  { id: 'park', label: 'Park' },
-  { id: 'freeride', label: 'Freeride' },
-  { id: 'touring', label: 'Touring' },
-  { id: 'street', label: 'Street' },
-];
 
 const TODAY = new Date().toISOString().slice(0, 10);
 
@@ -47,7 +33,7 @@ export default function AddSkiDayPage() {
   const supabase = createSupabaseBrowserClient();
   const router = useRouter();
 
-  const [resorts, setResorts] = useState<Resort[]>([]);
+  const [resorts, setResorts] = useState<ResortOption[]>([]);
   const [loadingResorts, setLoadingResorts] = useState(true);
 
   // Step: 'select-dates' or 'fill-forms'
@@ -152,45 +138,34 @@ export default function AddSkiDayPage() {
     setSubmitting(true);
     setErrorMsg(null);
 
+    // Prepare all records for server action
+    const inputs = selectedDates.map((date) => {
+      const data = formDataByDate[date];
+      return {
+        date,
+        resort_id: data.resortId,
+        hours: data.hours ? Number(data.hours) : null,
+        distance_km: data.distanceKm ? Number(data.distanceKm) : null,
+        rating: data.rating || null,
+        notes: data.notes || null,
+        ski_types: data.selectedTypes.length > 0 ? data.selectedTypes : null,
+      };
+    });
+
     try {
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
+      const result = await createSkiDays(inputs);
 
-      if (userError || !user) {
-        setErrorMsg('You must be logged in to add ski days.');
+      if (result.error) {
+        setErrorMsg(result.error);
         setSubmitting(false);
         return;
       }
 
-      // Prepare all records
-      const records = selectedDates.map((date) => {
-        const data = formDataByDate[date];
-        return {
-          user_id: user.id,
-          date,
-          resort_id: data.resortId,
-          hours: data.hours ? Number(data.hours) : null,
-          distance_km: data.distanceKm ? Number(data.distanceKm) : null,
-          rating: data.rating || null,
-          notes: data.notes || null,
-          ski_types: data.selectedTypes.length > 0 ? data.selectedTypes : null,
-        };
-      });
-
-      const { error } = await supabase.from('ski_days').insert(records);
-
-      if (error) {
-        setErrorMsg(error.message);
-        setSubmitting(false);
-        return;
-      }
-
-      // Success → go back to dashboard
-      router.push('/app');
-      router.refresh();
-    } finally {
+      // Success → navigate
+      router.push('/dashboard');
+    } catch (err) {
+      console.error('Failed to save:', err);
+      setErrorMsg('Failed to save. Please try again.');
       setSubmitting(false);
     }
   }
@@ -236,7 +211,7 @@ export default function AddSkiDayPage() {
           <div className="flex justify-end gap-3 pt-2">
             <button
               type="button"
-              onClick={() => router.push('/app')}
+              onClick={() => router.push('/dashboard')}
               className="btn btn-secondary"
             >
               Cancel
@@ -430,7 +405,7 @@ export default function AddSkiDayPage() {
           <div className="flex gap-2">
             <button
               type="button"
-              onClick={() => router.push('/app')}
+              onClick={() => router.push('/dashboard')}
               className="btn btn-secondary"
             >
               Cancel

@@ -3,18 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createSupabaseBrowserClient } from '@/lib/supabase/browser-client';
-
-type AvatarOption = {
-  id: string;
-  label: string;
-};
-
-const AVATAR_OPTIONS: AvatarOption[] = [
-  { id: 'blue', label: 'Blue' },
-  { id: 'green', label: 'Green' },
-  { id: 'orange', label: 'Orange' },
-  { id: 'purple', label: 'Purple' },
-];
+import { AVATAR_OPTIONS } from '@/types';
+import { updateProfile } from '@/lib/actions';
 
 export default function OnboardingPage() {
   const supabase = createSupabaseBrowserClient();
@@ -56,23 +46,17 @@ export default function OnboardingPage() {
     e.preventDefault();
     setLoading(true);
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      router.push('/login');
-      return;
-    }
-
-    await supabase.from('profiles').upsert({
-      id: user.id,
+    const result = await updateProfile({
       display_name: displayName,
       avatar_url: avatar,
     });
 
-    setLoading(false);
-    router.push('/app');
+    if (result.error) {
+      setLoading(false);
+      return;
+    }
+
+    router.push('/dashboard');
   }
 
   if (checkingAuth) {
@@ -94,7 +78,7 @@ export default function OnboardingPage() {
             type="text"
             required
             className="input"
-            placeholder="e.g. Samuli, SkiDad, PowderQueen"
+            placeholder="e.g. nickname" 
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
           />
@@ -102,32 +86,16 @@ export default function OnboardingPage() {
 
         <div className="space-y-2">
           <label className="label">Choose an avatar</label>
-          <div className="grid grid-cols-4 gap-3">
+          <div className="flex flex-wrap gap-3">
             {AVATAR_OPTIONS.map((option) => (
               <button
                 key={option.id}
                 type="button"
                 onClick={() => setAvatar(option.id)}
-                className={`flex flex-col items-center gap-1 p-2 rounded-lg border transition-all ${
-                  avatar === option.id
-                    ? 'border-[var(--color-accent)] bg-[var(--color-surface)]'
-                    : 'border-[var(--color-border)] bg-transparent hover:border-[var(--color-border-hover)]'
-                }`}
+                className={`avatar-option ${avatar === option.id ? 'avatar-option-selected' : ''}`}
               >
-                <div
-                  className={`w-10 h-10 rounded-full ${
-                    option.id === 'blue'
-                      ? 'bg-blue-500'
-                      : option.id === 'green'
-                      ? 'bg-emerald-500'
-                      : option.id === 'orange'
-                      ? 'bg-orange-500'
-                      : 'bg-purple-500'
-                  }`}
-                />
-                <span className="text-[10px] text-slate-300">
-                  {option.label}
-                </span>
+                <div className={`avatar avatar-lg ${option.class}`} />
+                <span className="text-[10px] text-slate-400">{option.label}</span>
               </button>
             ))}
           </div>

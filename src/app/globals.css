@@ -1,5 +1,15 @@
 @import 'tailwindcss';
 
+/* Custom breakpoints */
+@theme inline {
+  --breakpoint-xs: 30rem;     /* 480px */
+  --breakpoint-sm: 40rem;     /* 640px */
+  --breakpoint-md: 48rem;     /* 768px */
+  --breakpoint-lg: 67rem;     /* 1072px */
+  --breakpoint-xl: 80rem;     /* 1280px */
+  --breakpoint-2xl: 96rem;    /* 1536px */
+}
+
 /* ═══════════════════════════════════════════════════════════
    SKI TRACKER - Global Styles
    A winter-inspired dark theme with glassmorphism

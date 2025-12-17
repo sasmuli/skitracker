@@ -3,17 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createSupabaseBrowserClient } from '@/lib/supabase/browser-client';
+import { AVATAR_OPTIONS } from '@/types';
+import { updateProfile } from '@/lib/actions';
 import { PasswordInput } from '@/components/password-input';
 import { User, Mail, Lock, Trash2, Check, AlertTriangle } from 'lucide-react';
-
-const AVATAR_OPTIONS = [
-  { id: 'blue', label: 'Blue', class: 'avatar-blue' },
-  { id: 'green', label: 'Green', class: 'avatar-green' },
-  { id: 'orange', label: 'Orange', class: 'avatar-orange' },
-  { id: 'purple', label: 'Purple', class: 'avatar-purple' },
-  { id: 'pink', label: 'Pink', class: 'avatar-pink' },
-  { id: 'cyan', label: 'Cyan', class: 'avatar-cyan' },
-];
 
 export default function ProfilePage() {
   const supabase = createSupabaseBrowserClient();
@@ -72,21 +65,19 @@ export default function ProfilePage() {
     setSavingProfile(true);
     setProfileSuccess(false);
 
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
-    await supabase.from('profiles').upsert({
-      id: user.id,
+    const result = await updateProfile({
       display_name: displayName,
       avatar_url: avatar,
     });
 
     setSavingProfile(false);
+
+    if (result.error) {
+      return;
+    }
+
     setProfileSuccess(true);
-    
-    // Refresh to update header
     router.refresh();
-    
     setTimeout(() => setProfileSuccess(false), 3000);
   }
 
