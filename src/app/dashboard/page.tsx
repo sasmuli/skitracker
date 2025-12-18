@@ -2,7 +2,6 @@ import Link from 'next/link';
 import { createSupabaseServerClient } from '@/lib/supabase/server-client';
 import { SkiCalendar } from '@/components/ski-calendar';
 import { Plus } from 'lucide-react';
-import Image from 'next/image';
 import { getSkiDays, getSkiDayStats, getCurrentUserWithProfile } from '@/lib/queries';
 
 export default async function DashboardPage() {
@@ -39,21 +38,21 @@ export default async function DashboardPage() {
 
       {/* Quick Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-slate-800/50 rounded-xl p-4 text-center">
+        <div className="glass-card !p-4 text-center">
           <p className="text-2xl font-bold text-sky-400">{stats.totalDays}</p>
           <p className="text-xs text-slate-400">Ski Days</p>
         </div>
-        <div className="bg-slate-800/50 rounded-xl p-4 text-center">
+        <div className="glass-card !p-4 text-center">
           <p className="text-2xl font-bold text-sky-400">{stats.totalHours.toFixed(1)}</p>
           <p className="text-xs text-slate-400">Total Hours</p>
         </div>
-        <div className="bg-slate-800/50 rounded-xl p-4 text-center">
+        <div className="glass-card !p-4 text-center">
           <p className="text-2xl font-bold text-sky-400">
             {stats.avgRating ? stats.avgRating.toFixed(1) : '-'}
           </p>
           <p className="text-xs text-slate-400">Avg Rating</p>
         </div>
-        <div className="bg-slate-800/50 rounded-xl p-4 text-center">
+        <div className="glass-card !p-4 text-center">
           <p className="text-2xl font-bold text-sky-400">{stats.uniqueResorts}</p>
           <p className="text-xs text-slate-400">Resorts</p>
         </div>
@@ -62,10 +61,10 @@ export default async function DashboardPage() {
       {/* Mobile fixed button at bottom */}
       <Link
         href="/dashboard/add-day"
-        className="btn btn-primary fixed bottom-4 left-4 right-4 justify-center !inline-flex sm:!hidden"
+        className="btn-mobile btn-primary fixed bottom-4 left-4 right-4 justify-center !inline-flex sm:!hidden"
       >
         <Plus className="w-4 h-4" />
-        Add Ski Day
+        Add Ski Day, Mobile
       </Link>
     </div>
   );

@@ -7,6 +7,7 @@ import { SKI_TYPES, type SkiType, type ResortOption } from '@/types';
 import { createSkiDays } from '@/lib/actions';
 import { SnowflakeRating } from '@/components/snowflake-rating';
 import { MultiDatePicker } from '@/components/multi-date-picker';
+import { CustomSelect } from '@/components/custom-select';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 type DayFormData = {
@@ -266,34 +267,13 @@ export default function AddSkiDayPage() {
         {/* Resort */}
         <div className="space-y-1">
           <label className="text-xs text-slate-400">Resort</label>
-          <select
-            className="input input-select"
+          <CustomSelect
+            options={resorts.map((r) => ({ value: r.id, label: r.name }))}
             value={currentFormData.resortId}
-            onChange={(e) => updateCurrentFormData({ resortId: e.target.value })}
+            onChange={(value) => updateCurrentFormData({ resortId: value })}
+            placeholder={loadingResorts ? 'Loading resorts…' : resorts.length === 0 ? 'No resorts found' : 'Select resort'}
             disabled={loadingResorts || resorts.length === 0}
-          >
-            {loadingResorts && (
-              <option value="" disabled>
-                Loading resorts…
-              </option>
-            )}
-            {!loadingResorts && resorts.length === 0 && (
-              <option value="" disabled>
-                No resorts found. Add at least one resort.
-              </option>
-            )}
-            {!loadingResorts &&
-              resorts.length > 0 && [
-                <option key="placeholder" value="" disabled>
-                  Select resort
-                </option>,
-                ...resorts.map((r) => (
-                  <option key={r.id} value={r.id}>
-                    {r.name}
-                  </option>
-                )),
-              ]}
-          </select>
+          />
         </div>
 
         {/* Hours & distance */}
@@ -349,11 +329,7 @@ export default function AddSkiDayPage() {
                   key={type.id}
                   type="button"
                   onClick={() => toggleSkiType(type.id)}
-                  className={`text-m px-3 py-1 rounded-full border ${
-                    active
-                      ? 'bg-blue-600 border-blue-500 text-white'
-                      : 'bg-slate-900 border-slate-700 text-slate-300 hover:bg-slate-800'
-                  }`}
+                  className={`chip ${active ? 'chip-active' : ''}`}
                 >
                   {type.label}
                 </button>

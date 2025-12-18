@@ -17,7 +17,7 @@ const MONTHS = [
 const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 export function SkiCalendar({ skiDays, onDayClick }: SkiCalendarProps) {
-  const [currentDate, setCurrentDate] = useState(new Date()); //TODO add more ui to calendar day like show resort name or something like that 
+  const [currentDate, setCurrentDate] = useState(new Date());
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -67,44 +67,45 @@ export function SkiCalendar({ skiDays, onDayClick }: SkiCalendarProps) {
   const todayString = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`;
 
   return (
-    <div className="bg-slate-800/50 rounded-xl p-4">
+    <div className="ski-calendar">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="ski-calendar-header">
         <button
           type="button"
           onClick={prevMonth}
-          className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+          className="ski-calendar-nav"
         >
           <ChevronLeft className="w-5 h-5" />
         </button>
         
-        <h2 className="text-lg font-semibold">
+        <h2 className="ski-calendar-title">
           {MONTHS[month]} {year}
         </h2>
         
         <button
           type="button"
           onClick={nextMonth}
-          className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+          className="ski-calendar-nav"
         >
           <ChevronRight className="w-5 h-5" />
         </button>
       </div>
 
       {/* Weekday headers */}
-      <div className="grid grid-cols-7 gap-1 mb-2">
+      <div className="ski-calendar-weekdays">
         {WEEKDAYS.map(day => (
-          <div key={day} className="text-center text-xs text-slate-400 py-1">
+          <div key={day} className="ski-calendar-weekday">
             {day}
           </div>
         ))}
       </div>
 
       {/* Calendar grid */}
-      <div className="grid grid-cols-7 gap-1">
+      {/* TODO Change color of the day according to ski type (park, piste etc) not sure how to do if multiple choosen */}
+      <div className="ski-calendar-grid">
         {calendarDays.map((day, index) => {
           if (day === null) {
-            return <div key={`empty-${index}`} className="aspect-square" />;
+            return <div key={`empty-${index}`} className="ski-calendar-day" style={{ visibility: 'hidden' }} />;
           }
 
           const dateString = formatDateString(day);
@@ -117,20 +118,17 @@ export function SkiCalendar({ skiDays, onDayClick }: SkiCalendarProps) {
               key={dateString}
               type="button"
               onClick={() => onDayClick?.(dateString)}
-              className={`
-                aspect-square rounded-lg flex items-center justify-center text-sm
-                transition-colors relative
-                ${isToday ? 'ring-2 ring-sky-400' : ''}
-                ${hasSkiDay 
-                  ? 'bg-sky-600 hover:bg-sky-500 text-white font-medium' 
-                  : 'hover:bg-slate-700 text-slate-300'
-                }
-              `}
+              className={`ski-calendar-day ${isToday ? 'ski-calendar-day-today' : ''} ${hasSkiDay ? 'ski-calendar-day-ski' : ''}`}
             >
-              {day}
+              <span className="ski-calendar-day-number">{day}</span>
+              {hasSkiDay && skiDay.resort && (
+                <span className="ski-calendar-day-resort">
+                  {skiDay.resort.name}
+                </span>
+              )}
               {hasSkiDay && skiDay.rating && (
-                <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 text-[8px]">
-                  {'⭐'.repeat(Math.min(skiDay.rating, 3))}
+                <span className="ski-calendar-day-rating">
+                  {'⭐'.repeat(Math.min(skiDay.rating, 5))}
                 </span>
               )}
             </button>

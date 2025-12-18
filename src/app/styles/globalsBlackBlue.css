@@ -1,0 +1,1128 @@
+@import "tailwindcss";
+
+/* ============================================================
+   SKI TRACKER - Black & Blue Theme
+   - Black glassy background from globalsNew.css (noise, reflection)
+   - Blue accent colors from globals.css (icy blue)
+   ============================================================ */
+
+/* THEME INLINE (Tailwind v4) */
+@theme inline {
+  --breakpoint-xs: 30rem;     /* 480px */
+  --breakpoint-sm: 40rem;     /* 640px */
+  --breakpoint-md: 48rem;     /* 768px */
+  --breakpoint-lg: 67rem;     /* 1072px */
+  --breakpoint-xl: 80rem;     /* 1280px */
+  --breakpoint-2xl: 96rem;    /* 1536px */
+}
+
+/* ─────────────── CSS Variables ─────────────── */
+:root {
+  /* Base colors (black from globalsNew) */
+  --background: #000000;
+  --foreground: #f1f5f9;
+
+  /* Accent - icy blue (from globals.css) */
+  --accent: #38bdf8;
+  --accent-hover: #7dd3fc;
+  --accent-glow: rgba(56, 189, 248, 0.25);
+
+  /* Text */
+  --color-text: #f1f5f9;
+  --color-text-muted: #94a3b8;
+  --color-text-subtle: #64748b;
+
+  /* Glass effect variables (from globalsNew) */
+  --glass-background: rgba(10, 5, 7, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.03);
+  --glass-highlight: rgba(255, 255, 255, 0.02);
+  --glass-shadow: rgba(0, 0, 0, 0.9);
+  --glass-blur: 12px;
+
+  /* Reflection variables */
+  --reflection-opacity: 0.1;
+  --reflection-angle: 120deg;
+
+  /* Shadows */
+  --shadow-sm: 0 6px 16px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 12px 40px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 20px var(--accent-glow);
+
+  /* Feedback */
+  --color-success: #4ade80;
+  --color-error: #f87171;
+  --color-warning: #fbbf24;
+
+  color-scheme: dark;
+}
+
+/* ─────────────── Base / Body (Black from globalsNew) ─────────────── */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  color-scheme: dark;
+}
+
+body {
+  min-height: 100vh;
+  color: var(--foreground);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* Black gradient stack from globalsNew */
+  background: linear-gradient(
+    135deg,
+    #000000,
+    #050505 20%,
+    #0a0a0a 40%,
+    #050505 60%,
+    #000000
+  );
+  background-attachment: fixed;
+  background-size: cover;
+  position: relative;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* NOISE TEXTURE (from globalsNew) */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* REFLECTION SWEEP (from globalsNew) */
+body::after {
+  content: "";
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    var(--reflection-angle),
+    transparent,
+    rgba(255, 255, 255, 0.08),
+    transparent
+  );
+  animation: reflectionMove 12s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ─────────────── Typography ─────────────── */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--foreground);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+h1 { font-size: 2rem; }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.25rem; }
+
+p {
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+a {
+  color: var(--foreground);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--accent);
+}
+
+/* ─────────────── Glass Components (Black glass from globalsNew) ─────────────── */
+
+.glass {
+  background: linear-gradient(
+    to bottom right,
+    rgba(39, 39, 39, 0.75) 20%,
+    rgba(0, 0, 0, 0.6) 65%
+  );
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.glass-card,
+.profile-section {
+  background: linear-gradient(
+    to bottom right,
+    rgba(39, 39, 39, 0.75) 20%,
+    rgba(0, 0, 0, 0.6) 65%
+  );
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  padding: 1.5rem;
+}
+
+/* Highlight sweep */
+.glass::before,
+.glass-card::before,
+.profile-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(60deg, transparent, var(--glass-highlight), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.8s;
+}
+
+.glass:hover::before,
+.glass-card:hover::before,
+.profile-section:hover::before {
+  transform: translateX(100%);
+  transition: transform 1.2s;
+}
+
+/* Inner border glow */
+.glass::after,
+.glass-card::after,
+.profile-section::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 15px;
+  padding: 1px;
+  background: linear-gradient(135deg, var(--glass-border), transparent 50%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Hover glow */
+.glass:hover,
+.glass-card:hover,
+.profile-section:hover {
+  box-shadow:
+    0 0 25px rgba(255, 255, 255, 0.08),
+    0 0 20px rgba(255, 255, 255, 0.05);
+}
+
+/* Header glass */
+.glass-header {
+  background: linear-gradient(
+    to bottom right,
+    rgba(39, 39, 39, 0.85) 20%,
+    rgba(0, 0, 0, 0.75) 65%
+  );
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+/* Profile section header line */
+.profile-section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.profile-section-danger {
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* ─────────────── Form Elements (Black glass input) ─────────────── */
+
+.input {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.875rem;
+  color: var(--foreground);
+
+  background: linear-gradient(
+    to bottom right,
+    rgba(39, 39, 39, 0.75) 20%,
+    rgba(0, 0, 0, 0.6) 65%
+  );
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.input::placeholder {
+  color: var(--color-text-subtle);
+}
+
+/* Blue focus ring */
+.input:focus {
+  border-color: rgba(56, 189, 248, 0.45);
+  box-shadow:
+    0 0 0 3px var(--accent-glow),
+    var(--shadow-md);
+}
+
+.input:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.07), 0 0 10px rgba(146, 146, 146, 0.3);
+}
+
+
+.label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  margin-bottom: 0.375rem;
+}
+
+/* Autofill fixes */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+textarea:-webkit-autofill:active {
+  -webkit-text-fill-color: #ffffff !important;
+  -webkit-box-shadow: 0 0 0px 1000px rgba(0, 0, 0, 0.01) inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+  caret-color: var(--accent);
+}
+
+input:autofill,
+textarea:autofill,
+select:autofill {
+  color: #ffffff !important;
+  background-color: rgba(0, 0, 0, 0.01) !important;
+  box-shadow: 0 0 0px 1000px rgba(0, 0, 0, 0.01) inset !important;
+}
+
+/* ─────────────── Buttons (Blue accent from globals.css) ─────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-mobile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: none;
+}
+
+.btn-mobile:hover,
+.btn-mobile:focus,
+.btn-mobile:active {
+  transform: none !important;
+  box-shadow: var(--shadow-sm), 0 0 20px rgba(56, 189, 248, 0.2) !important;
+}
+
+.btn-mobile::before {
+  display: none !important;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Primary - icy blue gradient */
+.btn-primary {
+  background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
+  color: #0c1222;
+  box-shadow: var(--shadow-sm), 0 0 20px rgba(56, 189, 248, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 1;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #38bdf8 0%, #7dd3fc 100%);
+  box-shadow: var(--shadow-md), var(--shadow-glow);
+  transform: translateY(-1px);
+}
+
+.btn-primary:focus {
+  outline: none;
+  box-shadow:
+    0 0 0 3px var(--accent-glow),
+    var(--shadow-sm);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Shine sweep */
+.btn-primary::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: all 0.6s ease;
+  z-index: -1;
+}
+
+.btn-primary:hover::before {
+  left: 100%;
+}
+
+.btn-primary:disabled::before {
+  display: none;
+}
+
+/* Secondary - glass-like */
+.btn-secondary {
+  background: linear-gradient(
+    to bottom right,
+    rgba(39, 39, 39, 0.65) 20%,
+    rgba(0, 0, 0, 0.55) 65%
+  );
+  color: var(--foreground);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: linear-gradient(
+    to bottom right,
+    rgba(39, 39, 39, 0.75) 20%,
+    rgba(0, 0, 0, 0.6) 65%
+  );
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Ghost */
+.btn-ghost {
+  background: transparent;
+  color: var(--color-text-muted);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  color: var(--foreground);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Link */
+.btn-link {
+  background: none;
+  padding: 0;
+  color: var(--color-text-muted);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.btn-link:hover {
+  color: var(--accent);
+}
+
+/* Danger */
+.btn-danger {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  color: white;
+  box-shadow: var(--shadow-sm), 0 0 20px rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+  box-shadow: var(--shadow-md), 0 0 20px rgba(239, 68, 68, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-danger:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Chip/Pill buttons (for multi-select options like ski types) */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: linear-gradient(
+    to bottom right,
+    rgba(39, 39, 39, 0.75) 20%,
+    rgba(0, 0, 0, 0.6) 65%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  color: var(--color-text-muted);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+.chip:hover {
+  background: linear-gradient(
+    to bottom right,
+    rgba(50, 50, 50, 0.8) 20%,
+    rgba(10, 10, 10, 0.7) 65%
+  );
+  border-color: rgba(255, 255, 255, 0.12);
+  color: var(--color-text);
+}
+
+.chip-active {
+  background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
+  border-color: rgba(56, 189, 248, 0.5);
+  color: #0c1222;
+  box-shadow: 0 0 15px var(--accent-glow);
+}
+
+.chip-active:hover {
+  background: linear-gradient(135deg, #38bdf8 0%, #7dd3fc 100%);
+  color: #0c1222;
+}
+
+/* ─────────────── Layout Helpers ─────────────── */
+
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-content {
+  flex: 1;
+  padding: 1.5rem 1rem;
+  max-width: 72rem;
+  margin: 0 auto;
+  width: 100%;
+  position: relative;
+  z-index: 3;
+}
+
+.page-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 1rem;
+  position: relative;
+  z-index: 3;
+}
+
+/* ─────────────── Feedback States ─────────────── */
+
+.error-text {
+  color: var(--color-error);
+  font-size: 0.75rem;
+}
+
+.success-text {
+  color: var(--color-success);
+  font-size: 0.75rem;
+}
+
+/* ─────────────── Avatars ─────────────── */
+
+.avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.avatar-blue { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
+.avatar-purple { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
+.avatar-green { background: linear-gradient(135deg, #22c55e, #4ade80); }
+.avatar-orange { background: linear-gradient(135deg, #f97316, #fb923c); }
+.avatar-pink { background: linear-gradient(135deg, #ec4899, #f472b6); }
+.avatar-cyan { background: linear-gradient(135deg, #06b6d4, #22d3ee); }
+
+/* Blue neon pulse ring */
+.pulse-neon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(100% + 6px);
+  height: calc(100% + 6px);
+  border: 3px solid var(--accent);
+  border-radius: 9999px;
+  box-shadow: 0 0 10px var(--accent-glow);
+  transform: translate(-50%, -50%);
+  animation: neonPulse 2.5s infinite ease-in-out;
+  z-index: 0;
+}
+
+@keyframes neonPulse {
+  0%, 100% { box-shadow: 0 0 5px var(--accent-glow); opacity: 0.6; }
+  50% { box-shadow: 0 0 15px rgba(56, 189, 248, 0.6); opacity: 1; }
+}
+
+/* Avatar options - blue selection */
+.avatar-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem;
+  border-radius: 0.75rem;
+  border: 2px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.avatar-option:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.avatar-option-selected {
+  border-color: var(--accent);
+  background: rgba(56, 189, 248, 0.1);
+}
+
+.avatar-lg {
+  width: 3rem;
+  height: 3rem;
+}
+
+/* Profile link in header */
+.profile-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem;
+  border-radius: 0.5rem;
+  transition: background 0.2s ease;
+  cursor: pointer;
+}
+
+.profile-link:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* ─────────────── Ski Calendar (Blue accent) ─────────────── */
+
+.ski-calendar {
+  background: linear-gradient(
+    to bottom right,
+    rgba(39, 39, 39, 0.75) 20%,
+    rgba(0, 0, 0, 0.6) 65%
+  );
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+  padding: 1rem;
+}
+
+.ski-calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.ski-calendar-nav {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  background: transparent;
+  border: none;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.ski-calendar-nav:hover {
+  background: rgba(39, 39, 39, 0.7);
+}
+
+.ski-calendar-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.ski-calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.ski-calendar-weekday {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--color-text-subtle);
+  padding: 0.25rem;
+}
+
+.ski-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.25rem;
+}
+
+.ski-calendar-day {
+  aspect-ratio: 1;
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  position: relative;
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+  overflow: hidden;
+  padding: 0.125rem;
+}
+
+.ski-calendar-day-number {
+  font-weight: 500;
+  line-height: 1;
+}
+
+.ski-calendar-day-resort {
+  font-size: 1rem;
+  line-height: 1;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0.9;
+  margin-top: 0.5rem;
+}
+
+.ski-calendar-day:hover {
+  background: rgba(39, 39, 39, 0.7);
+}
+
+/* Blue today ring */
+.ski-calendar-day-today {
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+/* Blue ski day */
+.ski-calendar-day-ski {
+  background: #0284c7;
+  color: white;
+  font-weight: 500;
+}
+
+.ski-calendar-day-ski:hover {
+  background: #0ea5e9;
+}
+
+.ski-calendar-day-rating {
+  position: absolute;
+  bottom: 0.2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.5rem;
+}
+
+/* ─────────────── Custom Select ─────────────── */
+
+.custom-select {
+  position: relative;
+}
+
+.custom-select-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+  cursor: pointer;
+}
+
+.custom-select-trigger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.custom-select-value {
+  color: var(--color-text);
+}
+
+.custom-select-placeholder {
+  color: var(--color-text-subtle);
+}
+
+.custom-select-icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--color-text-subtle);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.custom-select-icon-open {
+  transform: rotate(180deg);
+}
+
+.custom-select-dropdown {
+  padding: 0.5rem;
+  background: linear-gradient(
+    to bottom right,
+    rgba(39, 39, 39, 0.98) 20%,
+    rgba(0, 0, 0, 0.95) 65%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  overflow-y: auto;
+}
+
+.custom-select-option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  background: transparent;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.custom-select-option:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-text);
+}
+
+.custom-select-option-selected {
+  color: var(--accent);
+  background: rgba(56, 189, 248, 0.1);
+}
+
+.custom-select-option-selected:hover {
+  background: rgba(56, 189, 248, 0.15);
+}
+
+.custom-select-check {
+  width: 1rem;
+  height: 1rem;
+  color: var(--accent);
+}
+
+/* ─────────────── Multi Date Picker (Blue accent) ─────────────── */
+
+.date-picker {
+  position: relative;
+}
+
+.date-picker-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+  min-height: 2.75rem;
+}
+
+.date-picker-trigger-text {
+  color: var(--color-text);
+}
+
+.date-picker-trigger-placeholder {
+  color: var(--color-text-subtle);
+}
+
+.date-picker-trigger-icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--color-text-subtle);
+  flex-shrink: 0;
+}
+
+/* Blue chips */
+.date-picker-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.date-picker-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  background: rgba(56, 189, 248, 0.2);
+  color: var(--accent);
+  font-size: 0.75rem;
+  border-radius: 9999px;
+}
+
+.date-picker-chip-remove {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: inherit;
+  transition: color 0.2s ease;
+}
+
+.date-picker-chip-remove:hover {
+  color: var(--color-text);
+}
+
+.date-picker-chip-remove-icon {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+/* Dropdown calendar (black glass) - positioned via JS Portal */
+.date-picker-dropdown {
+  padding: 1rem;
+  background: linear-gradient(
+    to bottom right,
+    rgba(39, 39, 39, 0.98) 20%,
+    rgba(0, 0, 0, 0.95) 65%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 0.5rem;
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+.date-picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.date-picker-nav {
+  padding: 0.25rem;
+  background: transparent;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.date-picker-nav:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.date-picker-nav-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--color-text-subtle);
+}
+
+.date-picker-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.date-picker-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.date-picker-weekday {
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-subtle);
+  padding: 0.25rem;
+}
+
+.date-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.25rem;
+}
+
+.date-picker-day {
+  width: 2rem;
+  height: 2rem;
+  font-size: 0.875rem;
+  border-radius: 0.375rem;
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.date-picker-day:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.date-picker-day:disabled {
+  color: var(--color-text-subtle);
+  cursor: not-allowed;
+}
+
+/* Blue selected day */
+.date-picker-day-selected {
+  background: var(--accent);
+  color: #0c1222;
+}
+
+.date-picker-day-selected:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+/* Blue today border */
+.date-picker-day-today {
+  border: 1px solid var(--accent);
+  color: var(--accent);
+}
+
+.date-picker-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.date-picker-clear {
+  font-size: 0.75rem;
+  color: var(--color-text-subtle);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.date-picker-clear:hover {
+  color: var(--color-text);
+}
+
+/* Blue done button */
+.date-picker-done {
+  font-size: 0.75rem;
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.date-picker-done:hover {
+  color: var(--accent-hover);
+}
+
+/* ─────────────── Scrollbar (Blue) ─────────────── */
+
+.scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) transparent;
+}
+
+::-webkit-scrollbar {
+  display: block;
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(56, 189, 248, 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--accent);
+}
+
+/* ─────────────── Selection (Blue) ─────────────── */
+
+::selection {
+  background: var(--accent);
+  color: #0c1222;
+}
+
+/* ─────────────── Animations ─────────────── */
+
+@keyframes reflectionMove {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(5%) rotate(5deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}

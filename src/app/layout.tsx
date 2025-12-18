@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
-import './globals.css';
+//import './styles/globals.css';
+import './styles/globalsBlackBlue.css';
+
 
 export const metadata: Metadata = {
   title: 'Ski Tracker',

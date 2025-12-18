@@ -84,6 +84,7 @@ export default function SignupPage() {
           type="email"
           required
           className="input"
+          placeholder='Enter Email'
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />

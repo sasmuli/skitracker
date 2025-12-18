@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { ChevronLeft, ChevronRight, Calendar, X } from 'lucide-react';
 
 type MultiDatePickerProps = {
@@ -22,12 +23,33 @@ export function MultiDatePicker({ selectedDates, onChange, maxDate }: MultiDateP
     const d = new Date();
     return { year: d.getFullYear(), month: d.getMonth() };
   });
+  const [dropdownStyle, setDropdownStyle] = useState<React.CSSProperties>({});
   const containerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Position dropdown when opened
+  useEffect(() => {
+    if (isOpen && triggerRef.current) {
+      const rect = triggerRef.current.getBoundingClientRect();
+      setDropdownStyle({
+        position: 'fixed',
+        top: rect.bottom + 8,
+        left: rect.left,
+        width: rect.width,
+        zIndex: 9999,
+      });
+    }
+  }, [isOpen]);
 
   // Close on outside click
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      const isOutsideContainer = containerRef.current && !containerRef.current.contains(target);
+      const isOutsideDropdown = dropdownRef.current && !dropdownRef.current.contains(target);
+      
+      if (isOutsideContainer && isOutsideDropdown) {
         setIsOpen(false);
       }
     }
@@ -113,80 +135,75 @@ export function MultiDatePicker({ selectedDates, onChange, maxDate }: MultiDateP
   const firstDay = getFirstDayOfMonth(viewDate.year, viewDate.month);
 
   return (
-    <div ref={containerRef} className="relative">
+    <div ref={containerRef} className="date-picker">
       {/* Trigger button */}
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="input w-full flex items-center justify-between text-left min-h-[44px]"
+        className="input date-picker-trigger"
       >
-        <span className={selectedDates.length > 0 ? 'text-slate-100' : 'text-slate-500'}>
+        <span className={selectedDates.length > 0 ? 'date-picker-trigger-text' : 'date-picker-trigger-placeholder'}>
           {selectedDates.length === 0 
             ? 'Select dates' 
             : `${selectedDates.length} day${selectedDates.length > 1 ? 's' : ''} selected`}
         </span>
-        <Calendar className="w-4 h-4 text-slate-400 flex-shrink-0" />
+        <Calendar className="date-picker-trigger-icon" />
       </button>
 
       {/* Selected dates chips */}
       {selectedDates.length > 0 && (
-        <div className="flex flex-wrap gap-2 mt-2">
+        <div className="date-picker-chips">
           {selectedDates.map((dateStr) => (
-            <span
-              key={dateStr}
-              className="inline-flex items-center gap-1 px-2 py-1 bg-sky-500/20 text-sky-300 text-xs rounded-full"
-            >
+            <span key={dateStr} className="date-picker-chip">
               {formatDate(dateStr)}
               <button
                 type="button"
                 onClick={() => removeDate(dateStr)}
-                className="hover:text-sky-100 transition-colors"
+                className="date-picker-chip-remove"
               >
-                <X className="w-3 h-3" />
+                <X className="date-picker-chip-remove-icon" />
               </button>
             </span>
           ))}
         </div>
       )}
 
-      {/* Dropdown calendar */}
-      {isOpen && (
-        <div className="absolute z-50 mt-2 p-4 bg-slate-900 border border-slate-700 rounded-lg shadow-xl w-full">
+      {/* Dropdown calendar - rendered via Portal */}
+      {isOpen && typeof document !== 'undefined' && createPortal(
+        <div ref={dropdownRef} className="date-picker-dropdown" style={dropdownStyle}>
           {/* Header */}
-          <div className="flex items-center justify-between mb-4">
+          <div className="date-picker-header">
             <button
               type="button"
               onClick={handlePrevMonth}
-              className="p-1 hover:bg-slate-800 rounded transition-colors"
+              className="date-picker-nav"
             >
-              <ChevronLeft className="w-5 h-5 text-slate-400" />
+              <ChevronLeft className="date-picker-nav-icon" />
             </button>
-            <span className="text-sm font-medium text-slate-200">
+            <span className="date-picker-title">
               {MONTHS[viewDate.month]} {viewDate.year}
             </span>
             <button
               type="button"
               onClick={handleNextMonth}
-              className="p-1 hover:bg-slate-800 rounded transition-colors"
+              className="date-picker-nav"
             >
-              <ChevronRight className="w-5 h-5 text-slate-400" />
+              <ChevronRight className="date-picker-nav-icon" />
             </button>
           </div>
 
           {/* Day headers */}
-          <div className="grid grid-cols-7 gap-1 mb-2">
+          <div className="date-picker-weekdays">
             {DAYS.map((day) => (
-              <div
-                key={day}
-                className="text-center text-xs text-slate-500 font-medium py-1"
-              >
+              <div key={day} className="date-picker-weekday">
                 {day}
               </div>
             ))}
           </div>
 
           {/* Days grid */}
-          <div className="grid grid-cols-7 gap-1">
+          <div className="date-picker-grid">
             {Array.from({ length: firstDay }, (_, i) => (
               <div key={`empty-${i}`} />
             ))}
@@ -203,25 +220,7 @@ export function MultiDatePicker({ selectedDates, onChange, maxDate }: MultiDateP
                   type="button"
                   disabled={disabled}
                   onClick={() => handleToggleDay(day)}
-                  className={`
-                    w-8 h-8 text-sm rounded-md transition-colors
-                    ${disabled
-                      ? 'text-slate-600 cursor-not-allowed'
-                      : 'hover:bg-slate-700 cursor-pointer'
-                    }
-                    ${selected
-                      ? 'bg-sky-500 text-white hover:bg-sky-600'
-                      : ''
-                    }
-                    ${today && !selected
-                      ? 'border border-sky-500 text-sky-400'
-                      : ''
-                    }
-                    ${!selected && !today && !disabled
-                      ? 'text-slate-300'
-                      : ''
-                    }
-                  `}
+                  className={`date-picker-day ${selected ? 'date-picker-day-selected' : ''} ${today && !selected ? 'date-picker-day-today' : ''}`}
                 >
                   {day}
                 </button>
@@ -230,23 +229,24 @@ export function MultiDatePicker({ selectedDates, onChange, maxDate }: MultiDateP
           </div>
 
           {/* Footer */}
-          <div className="flex justify-between mt-4 pt-3 border-t border-slate-700">
+          <div className="date-picker-footer">
             <button
               type="button"
               onClick={() => onChange([])}
-              className="text-xs text-slate-400 hover:text-slate-200 transition-colors"
+              className="date-picker-clear"
             >
               Clear all
             </button>
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="text-xs text-sky-400 hover:text-sky-300 transition-colors"
+              className="date-picker-done"
             >
               Done
             </button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

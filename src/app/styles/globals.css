@@ -453,3 +453,323 @@ a:hover {
 .profile-link:hover {
   background: rgba(255, 255, 255, 0.05);
 }
+
+/* ─────────────── Ski Calendar ─────────────── */
+
+.ski-calendar {
+  background: rgba(30, 41, 59, 0.5);
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+
+.ski-calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.ski-calendar-nav {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  background: transparent;
+  border: none;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.ski-calendar-nav:hover {
+  background: rgba(30, 41, 59, 0.7);
+}
+
+.ski-calendar-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.ski-calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.ski-calendar-weekday {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--color-text-subtle);
+  padding: 0.25rem;
+}
+
+.ski-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.25rem;
+}
+
+.ski-calendar-day {
+  aspect-ratio: 1;
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  position: relative;
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+  overflow: hidden;
+  padding: 0.125rem;
+}
+
+.ski-calendar-day-number {
+  font-weight: 500;
+  line-height: 1;
+}
+
+.ski-calendar-day-resort {
+  font-size: 1.2rem;
+  line-height: 1;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0.9;
+  margin-top: 0.5rem;
+}
+
+.ski-calendar-day:hover {
+  background: rgba(30, 41, 59, 0.7);
+}
+
+.ski-calendar-day-today {
+  box-shadow: inset 0 0 0 2px var(--color-accent);
+}
+
+.ski-calendar-day-ski {
+  background: #0284c7;
+  color: white;
+  font-weight: 500;
+}
+
+.ski-calendar-day-ski:hover {
+  background: #0ea5e9;
+}
+
+.ski-calendar-day-rating {
+  position: absolute;
+  bottom: 0.125rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.5rem;
+}
+
+/* ─────────────── Multi Date Picker ─────────────── */
+
+.date-picker {
+  position: relative;
+}
+
+.date-picker-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+  min-height: 2.75rem;
+}
+
+.date-picker-trigger-text {
+  color: var(--color-text);
+}
+
+.date-picker-trigger-placeholder {
+  color: var(--color-text-subtle);
+}
+
+.date-picker-trigger-icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--color-text-subtle);
+  flex-shrink: 0;
+}
+
+/* Selected dates chips */
+.date-picker-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.date-picker-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  background: rgba(56, 189, 248, 0.2);
+  color: var(--color-accent);
+  font-size: 0.75rem;
+  border-radius: 9999px;
+}
+
+.date-picker-chip-remove {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: inherit;
+  transition: color 0.2s ease;
+}
+
+.date-picker-chip-remove:hover {
+  color: var(--color-text);
+}
+
+.date-picker-chip-remove-icon {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+/* Dropdown calendar */
+.date-picker-dropdown {
+  position: absolute;
+  z-index: 50;
+  margin-top: 0.5rem;
+  padding: 1rem;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+}
+
+.date-picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.date-picker-nav {
+  padding: 0.25rem;
+  background: transparent;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.date-picker-nav:hover {
+  background: var(--color-surface);
+}
+
+.date-picker-nav-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--color-text-subtle);
+}
+
+.date-picker-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+/* Day headers */
+.date-picker-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.date-picker-weekday {
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-subtle);
+  padding: 0.25rem;
+}
+
+/* Days grid */
+.date-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.25rem;
+}
+
+.date-picker-day {
+  width: 2rem;
+  height: 2rem;
+  font-size: 0.875rem;
+  border-radius: 0.375rem;
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.date-picker-day:hover:not(:disabled) {
+  background: var(--color-surface);
+}
+
+.date-picker-day:disabled {
+  color: var(--color-text-subtle);
+  cursor: not-allowed;
+}
+
+.date-picker-day-selected {
+  background: var(--color-accent);
+  color: var(--color-bg);
+}
+
+.date-picker-day-selected:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+
+.date-picker-day-today {
+  border: 1px solid var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* Footer */
+.date-picker-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.date-picker-clear {
+  font-size: 0.75rem;
+  color: var(--color-text-subtle);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.date-picker-clear:hover {
+  color: var(--color-text);
+}
+
+.date-picker-done {
+  font-size: 0.75rem;
+  color: var(--color-accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.date-picker-done:hover {
+  color: var(--color-accent-hover);
+}
