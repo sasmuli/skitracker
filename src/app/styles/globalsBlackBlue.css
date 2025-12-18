@@ -656,7 +656,7 @@ select:autofill {
 }
 
 /* ─────────────── Ski Calendar (Blue accent) ─────────────── */
-
+/*TODO make calendar text smaller on mobile*/
 .ski-calendar {
   background: linear-gradient(
     to bottom right,
