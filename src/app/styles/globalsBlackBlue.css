@@ -737,8 +737,17 @@ select:autofill {
 }
 
 .ski-calendar-day-number {
+  font-size: 1.5rem;
   font-weight: 500;
   line-height: 1;
+}
+
+.ski-calendar-day-resort-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 100%;
+  margin-top: 0.25rem;
 }
 
 .ski-calendar-day-resort {
@@ -772,12 +781,30 @@ select:autofill {
   background: #0ea5e9;
 }
 
+.ski-calendar-day-type-indicator {
+  width: 100%;
+  height: 2px;
+  border-radius: 1px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
 .ski-calendar-day-rating {
   position: absolute;
   bottom: 0.2rem;
   left: 50%;
   transform: translateX(-50%);
   font-size: 0.5rem;
+}
+
+@media (max-width: 49rem) {
+  .ski-calendar-day-number {
+    font-size: 1.5rem;
+  }
+  .ski-calendar-day-resort-wrapper,
+  .ski-calendar-day-rating {
+    display: none;
+  }
 }
 
 /* ─────────────── Custom Select ─────────────── */
@@ -1109,6 +1136,150 @@ select:autofill {
 ::selection {
   background: var(--accent);
   color: #0c1222;
+}
+
+/* ─────────────── Ski Type Info ─────────────── */
+
+.ski-info-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  background: linear-gradient(
+    to bottom right,
+    rgba(50, 50, 50, 0.9) 20%,
+    rgba(20, 20, 20, 0.85) 65%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.ski-info-trigger:hover {
+  color: var(--color-text);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.ski-info-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+}
+
+.ski-info-dialog {
+  width: 100%;
+  max-width: 24rem;
+  background: linear-gradient(
+    to bottom right,
+    rgba(39, 39, 39, 0.98) 20%,
+    rgba(0, 0, 0, 0.95) 65%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  animation: fadeIn 0.2s ease-out;
+}
+
+.ski-info-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ski-info-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.ski-info-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+}
+
+.ski-info-close:hover {
+  color: var(--color-text);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.ski-info-content {
+  padding: 1.25rem;
+}
+
+.ski-info-description {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  margin: 0 0 1rem 0;
+  line-height: 1.5;
+}
+
+.ski-info-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ski-info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.ski-info-color {
+  width: 2rem;
+  height: 4px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.ski-info-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.ski-info-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.ski-info-desc {
+  font-size: 0.75rem;
+  color: var(--color-text-subtle);
+}
+
+.ski-info-note {
+  font-size: 0.75rem;
+  color: var(--color-text-subtle);
+  margin: 1rem 0 0 0;
+  font-style: italic;
 }
 
 /* ─────────────── Animations ─────────────── */

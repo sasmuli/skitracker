@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { createSupabaseServerClient } from '@/lib/supabase/server-client';
 import { SkiCalendar } from '@/components/ski-calendar';
+import { SkiTypeInfo } from '@/components/ski-type-info';
 import { Plus } from 'lucide-react';
 import { getSkiDays, getSkiDayStats, getCurrentUserWithProfile } from '@/lib/queries';
 
@@ -23,14 +24,17 @@ export default async function DashboardPage() {
           </div>
           <p className="text-sm text-slate-400">Track your ski journey and conquer the slopes</p>
         </div>
-        {/* Desktop button */}
-        <Link
-          href="/dashboard/add-day"
-          className="btn btn-primary !hidden sm:!inline-flex"
-        >
-          <Plus className="w-4 h-4" />
-          Add Ski Day
-        </Link>
+        {/* Desktop button and legend */}
+        <div className="flex items-center gap-3">
+          <SkiTypeInfo />
+          <Link
+            href="/dashboard/add-day"
+            className="btn btn-primary !hidden sm:!inline-flex"
+          >
+            <Plus className="w-4 h-4" />
+            Add Ski Day
+          </Link>
+        </div>
       </div>
 
       {/* Calendar */}

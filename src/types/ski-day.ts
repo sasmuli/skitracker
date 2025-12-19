@@ -7,6 +7,7 @@ export type SkiDay = {
     id: string;
     name: string;
   } | null;
+  ski_types?: string[] | null;
 };
 
 export type SkiDayInput = {

@@ -9,6 +9,7 @@ export async function getSkiDays(supabase: SupabaseClient, userId: string): Prom
       date,
       hours,
       rating,
+      ski_types,
       resorts!ski_days_resort_id_fkey (
         id,
         name
@@ -27,6 +28,7 @@ export async function getSkiDays(supabase: SupabaseClient, userId: string): Prom
     date: day.date,
     hours: day.hours,
     rating: day.rating,
+    ski_types: day.ski_types,
     resort: (day.resorts as unknown) as { id: string; name: string } | null,
   })) ?? [];
 }

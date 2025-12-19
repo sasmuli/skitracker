@@ -4,6 +4,37 @@ import { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { SkiDay } from '@/types';
 
+// Color mapping for ski types
+const SKI_TYPE_COLORS: Record<string, string> = {
+  piste: '#22c55e',      // green
+  park: '#ef4444',       // red
+  freeride: '#f97316',   // orange
+  backcountry: '#a855f7', // purple
+  street: '#06b6d4',     // cyan
+};
+
+// Generate gradient or solid color for ski type indicator
+function getSkiTypeGradient(skiTypes: string[] | null | undefined): string | null {
+  if (!skiTypes || skiTypes.length === 0) return null;
+  
+  const colors = skiTypes
+    .map(type => SKI_TYPE_COLORS[type])
+    .filter(Boolean);
+  
+  if (colors.length === 0) return null;
+  if (colors.length === 1) return colors[0];
+  
+  // Create gradient with equal segments
+  const segmentSize = 100 / colors.length;
+  const gradientStops = colors.map((color, i) => {
+    const start = i * segmentSize;
+    const end = (i + 1) * segmentSize;
+    return `${color} ${start}%, ${color} ${end}%`;
+  }).join(', ');
+  
+  return `linear-gradient(90deg, ${gradientStops})`;
+}
+
 type SkiCalendarProps = {
   skiDays: SkiDay[];
   onDayClick?: (date: string) => void;
@@ -113,6 +144,8 @@ export function SkiCalendar({ skiDays, onDayClick }: SkiCalendarProps) {
           const isToday = dateString === todayString;
           const hasSkiDay = !!skiDay;
 
+          const skiTypeGradient = hasSkiDay ? getSkiTypeGradient(skiDay.ski_types) : null;
+
           return (
             <button
               key={dateString}
@@ -122,8 +155,16 @@ export function SkiCalendar({ skiDays, onDayClick }: SkiCalendarProps) {
             >
               <span className="ski-calendar-day-number">{day}</span>
               {hasSkiDay && skiDay.resort && (
-                <span className="ski-calendar-day-resort">
-                  {skiDay.resort.name}
+                <span className="ski-calendar-day-resort-wrapper">
+                  <span className="ski-calendar-day-resort">
+                    {skiDay.resort.name}
+                  </span>
+                  {skiTypeGradient && (
+                    <span 
+                      className="ski-calendar-day-type-indicator"
+                      style={{ background: skiTypeGradient }}
+                    />
+                  )}
                 </span>
               )}
               {hasSkiDay && skiDay.rating && (
