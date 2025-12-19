@@ -16,6 +16,8 @@
   --breakpoint-2xl: 96rem;    /* 1536px */
 }
 
+/*TODO When screen smaller than 500px make button like save x ski day, cancel back to dates be in column also make log in sign up under some profile dropdown, make also raiting snowflakes smaller */
+
 /* ─────────────── CSS Variables ─────────────── */
 :root {
   /* Base colors (black from globalsNew) */
@@ -239,6 +241,43 @@ a:hover {
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+/* Mobile menu dropdown */
+.mobile-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: linear-gradient(
+    to bottom right,
+    rgba(39, 39, 39, 0.98) 20%,
+    rgba(0, 0, 0, 0.95) 65%
+  );
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  z-index: 50;
+}
+
+.mobile-menu-nav {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  gap: 0.25rem;
+}
+
+.mobile-menu-link {
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.mobile-menu-link:hover {
+  color: var(--color-text);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 /* Profile section header line */
@@ -799,7 +838,7 @@ select:autofill {
 
 @media (max-width: 49rem) {
   .ski-calendar-day-number {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
   }
   .ski-calendar-day-resort-wrapper,
   .ski-calendar-day-rating {

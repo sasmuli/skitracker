@@ -80,25 +80,25 @@ export function Header({ rightSlot, isAuthenticated = false }: HeaderProps) {
 
       {/* Mobile menu dropdown */}
       {mobileMenuOpen && (
-        <div className="absolute top-full left-0 right-0 bg-slate-900/95 border-b border-slate-700 lg:hidden z-50">
-          <nav className="flex flex-col p-4 gap-3 text-sm text-slate-300">
+        <div className="mobile-menu lg:hidden">
+          <nav className="mobile-menu-nav">
             <Link 
               href="/" 
-              className="hover:text-white py-2"
+              className="mobile-menu-link"
               onClick={() => setMobileMenuOpen(false)}
             >
               Home
             </Link>
             <Link 
               href="/info" 
-              className="hover:text-white py-2"
+              className="mobile-menu-link"
               onClick={() => setMobileMenuOpen(false)}
             >
               Info
             </Link>
             <Link 
               href="/features" 
-              className="hover:text-white py-2"
+              className="mobile-menu-link"
               onClick={() => setMobileMenuOpen(false)}
             >
               Features
@@ -107,28 +107,28 @@ export function Header({ rightSlot, isAuthenticated = false }: HeaderProps) {
               <>
                 <Link 
                   href="/dashboard" 
-                  className="hover:text-white py-2"
+                  className="mobile-menu-link"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Dashboard
                 </Link>
                 <Link 
                   href="/leaderboard" 
-                  className="hover:text-white py-2"
+                  className="mobile-menu-link"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Leaderboard
                 </Link>
                 <Link 
                   href="/friends" 
-                  className="hover:text-white py-2"
+                  className="mobile-menu-link"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Friends
                 </Link>
                 <Link 
                   href="/dashboard/profile" 
-                  className="hover:text-white py-2"
+                  className="mobile-menu-link"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Profile
