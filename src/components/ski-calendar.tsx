@@ -9,7 +9,7 @@ const SKI_TYPE_COLORS: Record<string, string> = {
   piste: "#22c55e", // green
   park: "#ef4444", // red
   freeride: "#f97316", // orange
-  backcountry: "#a855f7", // purple
+  touring: "#a855f7", // purple
   street: "#06b6d4", // cyan
 };
 

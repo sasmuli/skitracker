@@ -3,6 +3,7 @@ export type SkiDay = {
   date: string;
   hours: number | null;
   rating: number | null;
+  notes: string | null;
   resort: {
     id: string;
     name: string;

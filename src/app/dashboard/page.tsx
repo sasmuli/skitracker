@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { createSupabaseServerClient } from "@/lib/supabase/server-client";
-import { SkiCalendar } from "@/components/ski-calendar";
+import { SkiCalendarWithDialog } from "@/components/ski-calendar-with-dialog";
 import { SkiTypeInfo } from "@/components/ski-type-info";
 import { Plus } from "lucide-react";
 import {
@@ -44,7 +44,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Calendar */}
-      <SkiCalendar skiDays={skiDays || []} />
+      <SkiCalendarWithDialog skiDays={skiDays || []} />
 
       {/* Quick Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
