@@ -8,15 +8,86 @@
 
 /* THEME INLINE (Tailwind v4) */
 @theme inline {
-  --breakpoint-xs: 30rem;     /* 480px */
-  --breakpoint-sm: 40rem;     /* 640px */
-  --breakpoint-md: 48rem;     /* 768px */
-  --breakpoint-lg: 67rem;     /* 1072px */
-  --breakpoint-xl: 80rem;     /* 1280px */
-  --breakpoint-2xl: 96rem;    /* 1536px */
+  --breakpoint-xs: 30rem; /* 480px */
+  --breakpoint-sm: 40rem; /* 640px */
+  --breakpoint-md: 48rem; /* 768px */
+  --breakpoint-lg: 67rem; /* 1072px */
+  --breakpoint-xl: 80rem; /* 1280px */
+  --breakpoint-2xl: 96rem; /* 1536px */
 }
 
-/*TODO When screen smaller than 500px make button like save x ski day, cancel back to dates be in column also make log in sign up under some profile dropdown, make also raiting snowflakes smaller */
+/* ─────────────── Responsive: <500px (xs breakpoint) ─────────────── */
+@media (max-width: 31.25rem) {
+  /* Buttons in column layout for action groups */
+  .btn-group-responsive {
+    flex-direction: column !important;
+    width: 100%;
+  }
+
+  .btn-group-responsive .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Auth buttons container - hide on mobile (shown in dropdown) */
+  .auth-buttons-desktop {
+    display: none !important;
+  }
+
+  /* Profile dropdown toggle - show on mobile */
+  .profile-dropdown-toggle {
+    display: flex !important;
+  }
+
+  /* Profile dropdown menu */
+  .profile-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 0.5rem;
+    min-width: 10rem;
+    background: linear-gradient(
+      to bottom right,
+      rgba(39, 39, 39, 0.98) 20%,
+      rgba(0, 0, 0, 0.95) 65%
+    );
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow-lg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    z-index: 100;
+    padding: 0.5rem;
+  }
+
+  .profile-dropdown-menu .btn {
+    width: 100%;
+    justify-content: flex-start;
+    margin-bottom: 0.25rem;
+  }
+
+  .profile-dropdown-menu .btn:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Snowflake rating - smaller on mobile */
+  .snowflake-rating-container .snowflake-icon {
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+  }
+}
+
+/* Profile dropdown - hidden by default on desktop */
+.profile-dropdown-toggle {
+  display: none;
+}
+
+/* Auth buttons - visible by default on desktop */
+.auth-buttons-desktop {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
 
 /* ─────────────── CSS Variables ─────────────── */
 :root {
@@ -73,7 +144,8 @@ body {
 body {
   min-height: 100vh;
   color: var(--foreground);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
 
   /* Black gradient stack from globalsNew */
   background: linear-gradient(
@@ -122,15 +194,26 @@ body::after {
 }
 
 /* ─────────────── Typography ─────────────── */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: var(--foreground);
   font-weight: 600;
   letter-spacing: -0.02em;
 }
 
-h1 { font-size: 2rem; }
-h2 { font-size: 1.5rem; }
-h3 { font-size: 1.25rem; }
+h1 {
+  font-size: 2rem;
+}
+h2 {
+  font-size: 1.5rem;
+}
+h3 {
+  font-size: 1.25rem;
+}
 
 p {
   color: var(--color-text-muted);
@@ -193,7 +276,12 @@ a:hover {
   left: -50%;
   width: 200%;
   height: 100%;
-  background: linear-gradient(60deg, transparent, var(--glass-highlight), transparent);
+  background: linear-gradient(
+    60deg,
+    transparent,
+    var(--glass-highlight),
+    transparent
+  );
   transform: translateX(-100%);
   transition: transform 0.8s;
 }
@@ -226,8 +314,7 @@ a:hover {
 .glass:hover,
 .glass-card:hover,
 .profile-section:hover {
-  box-shadow:
-    0 0 25px rgba(255, 255, 255, 0.08),
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.08),
     0 0 20px rgba(255, 255, 255, 0.05);
 }
 
@@ -325,16 +412,14 @@ a:hover {
 /* Blue focus ring */
 .input:focus {
   border-color: rgba(56, 189, 248, 0.45);
-  box-shadow:
-    0 0 0 3px var(--accent-glow),
-    var(--shadow-md);
+  box-shadow: 0 0 0 3px var(--accent-glow), var(--shadow-md);
 }
 
 .input:hover {
   transform: scale(1.02);
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.07), 0 0 10px rgba(146, 146, 146, 0.3);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.07),
+    0 0 10px rgba(146, 146, 146, 0.3);
 }
-
 
 .label {
   display: block;
@@ -432,9 +517,7 @@ select:autofill {
 
 .btn-primary:focus {
   outline: none;
-  box-shadow:
-    0 0 0 3px var(--accent-glow),
-    var(--shadow-sm);
+  box-shadow: 0 0 0 3px var(--accent-glow), var(--shadow-sm);
 }
 
 .btn-primary:active:not(:disabled) {
@@ -449,7 +532,12 @@ select:autofill {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
   transition: all 0.6s ease;
   z-index: -1;
 }
@@ -624,12 +712,24 @@ select:autofill {
   font-size: 0.75rem;
 }
 
-.avatar-blue { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
-.avatar-purple { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
-.avatar-green { background: linear-gradient(135deg, #22c55e, #4ade80); }
-.avatar-orange { background: linear-gradient(135deg, #f97316, #fb923c); }
-.avatar-pink { background: linear-gradient(135deg, #ec4899, #f472b6); }
-.avatar-cyan { background: linear-gradient(135deg, #06b6d4, #22d3ee); }
+.avatar-blue {
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+}
+.avatar-purple {
+  background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+}
+.avatar-green {
+  background: linear-gradient(135deg, #22c55e, #4ade80);
+}
+.avatar-orange {
+  background: linear-gradient(135deg, #f97316, #fb923c);
+}
+.avatar-pink {
+  background: linear-gradient(135deg, #ec4899, #f472b6);
+}
+.avatar-cyan {
+  background: linear-gradient(135deg, #06b6d4, #22d3ee);
+}
 
 /* Blue neon pulse ring */
 .pulse-neon {
@@ -647,8 +747,15 @@ select:autofill {
 }
 
 @keyframes neonPulse {
-  0%, 100% { box-shadow: 0 0 5px var(--accent-glow); opacity: 0.6; }
-  50% { box-shadow: 0 0 15px rgba(56, 189, 248, 0.6); opacity: 1; }
+  0%,
+  100% {
+    box-shadow: 0 0 5px var(--accent-glow);
+    opacity: 0.6;
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.6);
+    opacity: 1;
+  }
 }
 
 /* Avatar options - blue selection */
@@ -695,7 +802,6 @@ select:autofill {
 }
 
 /* ─────────────── Ski Calendar (Blue accent) ─────────────── */
-/*TODO make calendar text smaller on mobile*/
 .ski-calendar {
   background: linear-gradient(
     to bottom right,
@@ -1324,15 +1430,66 @@ select:autofill {
 /* ─────────────── Animations ─────────────── */
 
 @keyframes reflectionMove {
-  0% { transform: translateY(0) rotate(0deg); }
-  100% { transform: translateY(5%) rotate(5deg); }
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  100% {
+    transform: translateY(5%) rotate(5deg);
+  }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate-fade-in {
   animation: fadeIn 0.4s ease-out;
+}
+
+/* ─────────────── Additional Mobile Responsive Styles ─────────────── */
+@media (max-width: 31.25rem) {
+  /* Form button groups - stack vertically */
+  .form-actions {
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+  }
+
+  .form-actions > div {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .form-actions .btn {
+    width: 100%;
+  }
+
+  /* Navigation button groups in add-day form */
+  .nav-buttons-left {
+    flex-direction: column !important;
+    width: 100%;
+    gap: 0.5rem !important;
+    order: 1;
+  }
+
+  .nav-buttons-right {
+    flex-direction: column !important;
+    width: 100%;
+    gap: 0.5rem !important;
+    order: 2;
+  }
+
+  .nav-buttons-left .btn,
+  .nav-buttons-right .btn {
+    width: 100%;
+    justify-content: center;
+  }
 }

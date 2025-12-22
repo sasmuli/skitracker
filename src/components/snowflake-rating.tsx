@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Snowflake } from 'lucide-react';
-import { useState } from 'react';
+import { Snowflake } from "lucide-react";
+import { useState } from "react";
 
 type SnowflakeRatingProps = {
   value: number;
@@ -9,7 +9,11 @@ type SnowflakeRatingProps = {
   max?: number;
 };
 
-export function SnowflakeRating({ value, onChange, max = 5 }: SnowflakeRatingProps) {
+export function SnowflakeRating({
+  value,
+  onChange,
+  max = 5,
+}: SnowflakeRatingProps) {
   const [hoverValue, setHoverValue] = useState<number | null>(null);
 
   const displayValue = hoverValue !== null ? hoverValue : value;
@@ -27,8 +31,8 @@ export function SnowflakeRating({ value, onChange, max = 5 }: SnowflakeRatingPro
   }
 
   return (
-    <div 
-      className="flex gap-1.5"
+    <div
+      className="flex gap-1.5 snowflake-rating-container"
       onMouseLeave={() => setHoverValue(null)}
     >
       {Array.from({ length: max }, (_, i) => {
@@ -49,21 +53,21 @@ export function SnowflakeRating({ value, onChange, max = 5 }: SnowflakeRatingPro
           >
             {/* Background snowflake (empty) */}
             <Snowflake
-              className="w-16 h-16 text-slate-700"
+              className="w-16 h-16 text-slate-700 snowflake-icon"
               fill="transparent"
               strokeWidth={1.5}
             />
-            
+
             {/* Filled snowflake overlay */}
             {(isFilled || isHalfFilled) && (
               <div
                 className="absolute inset-0 overflow-hidden"
                 style={{
-                  width: isHalfFilled ? '50%' : '100%',
+                  width: isHalfFilled ? "50%" : "100%",
                 }}
               >
                 <Snowflake
-                  className="w-16 h-16 text-sky-400"
+                  className="w-16 h-16 text-sky-400 snowflake-icon"
                   fill="currentColor"
                   strokeWidth={1.5}
                 />

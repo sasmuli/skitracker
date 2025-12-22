@@ -1,10 +1,11 @@
-import Link from 'next/link';
-import { createSupabaseServerClient } from '@/lib/supabase/server-client';
-import { getCurrentUserWithProfile } from '@/lib/queries';
-import { getAvatarClass } from '@/types';
-import { LogoutButton } from '@/components/logout-button';
-import { Header } from '@/components/header';
-import { LogIn, UserPlus } from 'lucide-react';
+import Link from "next/link";
+import { createSupabaseServerClient } from "@/lib/supabase/server-client";
+import { getCurrentUserWithProfile } from "@/lib/queries";
+import { getAvatarClass } from "@/types";
+import { LogoutButton } from "@/components/logout-button";
+import { Header } from "@/components/header";
+import { AuthDropdown } from "@/components/auth-dropdown";
+import { LogIn, UserPlus } from "lucide-react";
 
 export default async function HomePage() {
   const supabase = await createSupabaseServerClient();
@@ -15,18 +16,23 @@ export default async function HomePage() {
   if (!user) {
     rightSlot = (
       <>
-        <Link href="/login" className="btn btn-primary">
-          <LogIn className="w-4 h-4" />
-          Log in
-        </Link>
-        <Link href="/signup" className="btn btn-secondary">
-          <UserPlus className="w-4 h-4" />
-          Sign up
-        </Link>
+        {/* Desktop auth buttons */}
+        <div className="auth-buttons-desktop">
+          <Link href="/login" className="btn btn-primary">
+            <LogIn className="w-4 h-4" />
+            Log in
+          </Link>
+          <Link href="/signup" className="btn btn-secondary">
+            <UserPlus className="w-4 h-4" />
+            Sign up
+          </Link>
+        </div>
+        {/* Mobile auth dropdown */}
+        <AuthDropdown />
       </>
     );
   } else {
-    const displayName = profile?.display_name || user.email || 'Ski friend';
+    const displayName = profile?.display_name || user.email || "Ski friend";
     const avatarClass = getAvatarClass(profile?.avatar_url);
 
     rightSlot = (
@@ -35,7 +41,9 @@ export default async function HomePage() {
           <div className={`avatar ${avatarClass}`} />
           <div className="hidden sm:flex flex-col">
             <span className="text-xs font-medium">{displayName}</span>
-            <span className="text-[10px] text-[var(--color-text-muted)]">{user.email}</span>
+            <span className="text-[10px] text-[var(--color-text-muted)]">
+              {user.email}
+            </span>
           </div>
         </Link>
         <LogoutButton />
@@ -52,10 +60,7 @@ export default async function HomePage() {
         <p className="mb-6">Landing page</p>
 
         {user ? (
-          <Link
-            href="/dashboard"
-            className="btn btn-primary"
-          >
+          <Link href="/dashboard" className="btn btn-primary">
             Go to App
           </Link>
         ) : null}

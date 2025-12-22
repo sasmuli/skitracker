@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { createSupabaseBrowserClient } from '@/lib/supabase/browser-client';
-import { SKI_TYPES, type SkiType, type ResortOption } from '@/types';
-import { createSkiDays } from '@/lib/actions';
-import { SnowflakeRating } from '@/components/snowflake-rating';
-import { MultiDatePicker } from '@/components/multi-date-picker';
-import { CustomSelect } from '@/components/custom-select';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { createSupabaseBrowserClient } from "@/lib/supabase/browser-client";
+import { SKI_TYPES, type SkiType, type ResortOption } from "@/types";
+import { createSkiDays } from "@/lib/actions";
+import { SnowflakeRating } from "@/components/snowflake-rating";
+import { MultiDatePicker } from "@/components/multi-date-picker";
+import { CustomSelect } from "@/components/custom-select";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type DayFormData = {
   resortId: string;
@@ -22,11 +22,11 @@ type DayFormData = {
 const TODAY = new Date().toISOString().slice(0, 10);
 
 const EMPTY_FORM: DayFormData = {
-  resortId: '',
-  hours: '',
-  distanceKm: '',
+  resortId: "",
+  hours: "",
+  distanceKm: "",
   rating: 0,
-  notes: '',
+  notes: "",
   selectedTypes: [],
 };
 
@@ -38,14 +38,18 @@ export default function AddSkiDayPage() {
   const [loadingResorts, setLoadingResorts] = useState(true);
 
   // Step: 'select-dates' or 'fill-forms'
-  const [step, setStep] = useState<'select-dates' | 'fill-forms'>('select-dates');
-  
+  const [step, setStep] = useState<"select-dates" | "fill-forms">(
+    "select-dates"
+  );
+
   // Selected dates (sorted)
   const [selectedDates, setSelectedDates] = useState<string[]>([]);
-  
+
   // Form data for each date (keyed by date string)
-  const [formDataByDate, setFormDataByDate] = useState<Record<string, DayFormData>>({});
-  
+  const [formDataByDate, setFormDataByDate] = useState<
+    Record<string, DayFormData>
+  >({});
+
   // Current day index when filling forms
   const [currentDayIndex, setCurrentDayIndex] = useState(0);
 
@@ -57,9 +61,9 @@ export default function AddSkiDayPage() {
     async function loadResorts() {
       setLoadingResorts(true);
       const { data, error } = await supabase
-        .from('resorts')
-        .select('id, name')
-        .order('name', { ascending: true });
+        .from("resorts")
+        .select("id, name")
+        .order("name", { ascending: true });
 
       if (!error && data) {
         setResorts(data);
@@ -102,12 +106,12 @@ export default function AddSkiDayPage() {
 
   function handleStartFilling() {
     if (selectedDates.length === 0) {
-      setErrorMsg('Please select at least one date.');
+      setErrorMsg("Please select at least one date.");
       return;
     }
     setErrorMsg(null);
     setCurrentDayIndex(0);
-    setStep('fill-forms');
+    setStep("fill-forms");
   }
 
   function handlePrevDay() {
@@ -119,11 +123,11 @@ export default function AddSkiDayPage() {
   function handleNextDay() {
     // Validate current day before moving
     if (!currentFormData.resortId) {
-      setErrorMsg('Please select a resort.');
+      setErrorMsg("Please select a resort.");
       return;
     }
     setErrorMsg(null);
-    
+
     if (currentDayIndex < selectedDates.length - 1) {
       setCurrentDayIndex(currentDayIndex + 1);
     }
@@ -132,7 +136,7 @@ export default function AddSkiDayPage() {
   async function handleSubmitAll() {
     // Validate current (last) day
     if (!currentFormData.resortId) {
-      setErrorMsg('Please select a resort.');
+      setErrorMsg("Please select a resort.");
       return;
     }
 
@@ -163,21 +167,21 @@ export default function AddSkiDayPage() {
       }
 
       // Success → navigate
-      router.push('/dashboard');
+      router.push("/dashboard");
     } catch (err) {
-      console.error('Failed to save:', err);
-      setErrorMsg('Failed to save. Please try again.');
+      console.error("Failed to save:", err);
+      setErrorMsg("Failed to save. Please try again.");
       setSubmitting(false);
     }
   }
 
   function formatDateDisplay(dateStr: string) {
     const d = new Date(dateStr);
-    return d.toLocaleDateString('en-GB', {
-      weekday: 'short',
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
+    return d.toLocaleDateString("en-GB", {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
     });
   }
 
@@ -185,14 +189,15 @@ export default function AddSkiDayPage() {
   const isFirstDay = currentDayIndex === 0;
 
   // Step 1: Select dates
-  if (step === 'select-dates') {
+  if (step === "select-dates") {
     return (
       <div className="p-6 flex justify-center">
         <div className="glass-card w-full max-w-xl space-y-5">
           <div>
             <h1 className="text-xl font-semibold">Add Ski Days</h1>
             <p className="text-xs text-slate-400">
-              Select the dates you want to log, then fill in details for each day.
+              Select the dates you want to log, then fill in details for each
+              day.
             </p>
           </div>
 
@@ -205,26 +210,27 @@ export default function AddSkiDayPage() {
             />
           </div>
 
-          {errorMsg && (
-            <p className="text-xs text-red-400">{errorMsg}</p>
-          )}
+          {errorMsg && <p className="text-xs text-red-400">{errorMsg}</p>}
 
-          <div className="flex justify-end gap-3 pt-2">
-            <button
-              type="button"
-              onClick={() => router.push('/dashboard')}
-              className="btn btn-secondary"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={handleStartFilling}
-              disabled={selectedDates.length === 0}
-              className="btn btn-primary"
-            >
-              Continue ({selectedDates.length} day{selectedDates.length !== 1 ? 's' : ''})
-            </button>
+          <div className="flex justify-end gap-3 pt-2 form-actions">
+            <div className="flex gap-2 nav-buttons-right">
+              <button
+                type="button"
+                onClick={() => router.push("/dashboard")}
+                className="btn btn-secondary"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleStartFilling}
+                disabled={selectedDates.length === 0}
+                className="btn btn-primary"
+              >
+                Continue ({selectedDates.length} day
+                {selectedDates.length !== 1 ? "s" : ""})
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -246,7 +252,7 @@ export default function AddSkiDayPage() {
           <p className="text-sm text-sky-400 font-medium">
             {formatDateDisplay(currentDate)}
           </p>
-          
+
           {/* Progress dots */}
           <div className="flex gap-1.5 mt-3">
             {selectedDates.map((_, idx) => (
@@ -254,10 +260,10 @@ export default function AddSkiDayPage() {
                 key={idx}
                 className={`h-1.5 flex-1 rounded-full transition-colors ${
                   idx < currentDayIndex
-                    ? 'bg-sky-500'
+                    ? "bg-sky-500"
                     : idx === currentDayIndex
-                    ? 'bg-sky-400'
-                    : 'bg-slate-700'
+                    ? "bg-sky-400"
+                    : "bg-slate-700"
                 }`}
               />
             ))}
@@ -271,7 +277,13 @@ export default function AddSkiDayPage() {
             options={resorts.map((r) => ({ value: r.id, label: r.name }))}
             value={currentFormData.resortId}
             onChange={(value) => updateCurrentFormData({ resortId: value })}
-            placeholder={loadingResorts ? 'Loading resorts…' : resorts.length === 0 ? 'No resorts found' : 'Select resort'}
+            placeholder={
+              loadingResorts
+                ? "Loading resorts…"
+                : resorts.length === 0
+                ? "No resorts found"
+                : "Select resort"
+            }
             disabled={loadingResorts || resorts.length === 0}
           />
         </div>
@@ -299,7 +311,9 @@ export default function AddSkiDayPage() {
               step="0.1"
               className="input"
               value={currentFormData.distanceKm}
-              onChange={(e) => updateCurrentFormData({ distanceKm: e.target.value })}
+              onChange={(e) =>
+                updateCurrentFormData({ distanceKm: e.target.value })
+              }
               placeholder="Select distance"
             />
           </div>
@@ -329,7 +343,7 @@ export default function AddSkiDayPage() {
                   key={type.id}
                   type="button"
                   onClick={() => toggleSkiType(type.id)}
-                  className={`chip ${active ? 'chip-active' : ''}`}
+                  className={`chip ${active ? "chip-active" : ""}`}
                 >
                   {type.label}
                 </button>
@@ -350,13 +364,11 @@ export default function AddSkiDayPage() {
           />
         </div>
 
-        {errorMsg && (
-          <p className="text-xs text-red-400">{errorMsg}</p>
-        )}
+        {errorMsg && <p className="text-xs text-red-400">{errorMsg}</p>}
 
         {/* Navigation buttons */}
-        <div className="flex justify-between gap-3 pt-2">
-          <div className="flex gap-2">
+        <div className="flex justify-between gap-3 pt-2 form-actions">
+          <div className="flex gap-2 nav-buttons-left">
             {!isFirstDay && (
               <button
                 type="button"
@@ -370,7 +382,7 @@ export default function AddSkiDayPage() {
             {isFirstDay && (
               <button
                 type="button"
-                onClick={() => setStep('select-dates')}
+                onClick={() => setStep("select-dates")}
                 className="btn btn-secondary"
               >
                 Back to dates
@@ -378,15 +390,15 @@ export default function AddSkiDayPage() {
             )}
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex gap-2 nav-buttons-right">
             <button
               type="button"
-              onClick={() => router.push('/dashboard')}
+              onClick={() => router.push("/dashboard")}
               className="btn btn-secondary"
             >
               Cancel
             </button>
-            
+
             {isLastDay ? (
               <button
                 type="button"
@@ -394,7 +406,11 @@ export default function AddSkiDayPage() {
                 disabled={submitting || loadingResorts || resorts.length === 0}
                 className="btn btn-primary"
               >
-                {submitting ? 'Saving…' : `Save ${selectedDates.length} ski day${selectedDates.length > 1 ? 's' : ''}`}
+                {submitting
+                  ? "Saving…"
+                  : `Save ${selectedDates.length} ski day${
+                      selectedDates.length > 1 ? "s" : ""
+                    }`}
               </button>
             ) : (
               <button
