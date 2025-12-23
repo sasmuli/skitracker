@@ -1604,6 +1604,15 @@ select:autofill {
   white-space: pre-wrap;
 }
 
+.ski-day-dialog-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 1rem;
+  margin-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 /* ─────────────── Additional Mobile Responsive Styles ─────────────── */
 @media (max-width: 31.25rem) {
   /* Form button groups - stack vertically */

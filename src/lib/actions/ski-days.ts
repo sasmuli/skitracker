@@ -1,14 +1,16 @@
-'use server';
+"use server";
 
-import { createSupabaseServerClient } from '@/lib/supabase/server-client';
-import type { SkiDayInput } from '@/types';
+import { createSupabaseServerClient } from "@/lib/supabase/server-client";
+import type { SkiDayInput, UpdateSkiDayInput } from "@/types";
 
 export async function createSkiDays(inputs: SkiDayInput[]) {
   const supabase = await createSupabaseServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) {
-    return { error: 'Not authenticated' };
+    return { error: "Not authenticated" };
   }
 
   const records = inputs.map((input) => ({
@@ -22,7 +24,32 @@ export async function createSkiDays(inputs: SkiDayInput[]) {
     ski_types: input.ski_types,
   }));
 
-  const { error } = await supabase.from('ski_days').insert(records);
+  const { error } = await supabase.from("ski_days").insert(records);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  return { success: true };
+}
+
+export async function updateSkiDay(input: UpdateSkiDayInput) {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
+
+  const { id, ...updates } = input;
+
+  const { error } = await supabase
+    .from("ski_days")
+    .update(updates)
+    .eq("id", id)
+    .eq("user_id", user.id);
 
   if (error) {
     return { error: error.message };
@@ -33,17 +60,19 @@ export async function createSkiDays(inputs: SkiDayInput[]) {
 
 export async function deleteSkiDay(id: string) {
   const supabase = await createSupabaseServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) {
-    return { error: 'Not authenticated' };
+    return { error: "Not authenticated" };
   }
 
   const { error } = await supabase
-    .from('ski_days')
+    .from("ski_days")
     .delete()
-    .eq('id', id)
-    .eq('user_id', user.id);
+    .eq("id", id)
+    .eq("user_id", user.id);
 
   if (error) {
     return { error: error.message };

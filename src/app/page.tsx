@@ -52,6 +52,7 @@ export default async function HomePage() {
   }
 
   return (
+    //TODO add https://shadergradient.co/ gradient as background or https://reactbits.dev/backgrounds/liquid-ether
     <div className="page-container">
       <Header rightSlot={rightSlot} isAuthenticated={!!user} />
 

@@ -7,6 +7,7 @@ import {
   getSkiDays,
   getSkiDayStats,
   getCurrentUserWithProfile,
+  getResorts,
 } from "@/lib/queries";
 
 export default async function DashboardPage() {
@@ -14,6 +15,7 @@ export default async function DashboardPage() {
   const { user, profile } = await getCurrentUserWithProfile(supabase);
 
   const skiDays = await getSkiDays(supabase, user!.id);
+  const resorts = await getResorts(supabase);
   const stats = getSkiDayStats(skiDays);
 
   const displayName = profile?.display_name || "Skier";
@@ -44,7 +46,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Calendar */}
-      <SkiCalendarWithDialog skiDays={skiDays || []} />
+      <SkiCalendarWithDialog skiDays={skiDays || []} resorts={resorts} />
 
       {/* Quick Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

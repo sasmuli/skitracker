@@ -2,6 +2,7 @@ export type SkiDay = {
   id: string;
   date: string;
   hours: number | null;
+  distance_km: number | null;
   rating: number | null;
   notes: string | null;
   resort: {
@@ -17,6 +18,16 @@ export type SkiDayInput = {
   hours?: number | null;
   rating?: number | null;
   distance_km?: number | null;
+  notes?: string | null;
+  ski_types?: string[] | null;
+};
+
+export type UpdateSkiDayInput = {
+  id: string;
+  resort_id?: string;
+  hours?: number | null;
+  distance_km?: number | null;
+  rating?: number | null;
   notes?: string | null;
   ski_types?: string[] | null;
 };
