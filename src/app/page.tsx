@@ -6,6 +6,7 @@ import { LogoutButton } from "@/components/logout-button";
 import { Header } from "@/components/header";
 import { AuthDropdown } from "@/components/auth-dropdown";
 import { LogIn, UserPlus } from "lucide-react";
+import { FloatingLinesBackground } from "@/components/floatinglines-backgorund";
 
 export default async function HomePage() {
   const supabase = await createSupabaseServerClient();
@@ -52,8 +53,8 @@ export default async function HomePage() {
   }
 
   return (
-    //TODO add https://shadergradient.co/ gradient as background or https://reactbits.dev/backgrounds/liquid-ether
-    <div className="page-container">
+    <div>
+      <FloatingLinesBackground />
       <Header rightSlot={rightSlot} isAuthenticated={!!user} />
 
       <main className="flex flex-col items-center justify-center py-10">

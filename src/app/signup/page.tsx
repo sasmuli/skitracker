@@ -1,18 +1,18 @@
 // src/app/signup/page.tsx
-'use client';
+"use client";
 
-import { FormEvent, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { createSupabaseBrowserClient } from '@/lib/supabase/browser-client';
-import { PasswordInput } from '@/components/password-input';
-import { Mail } from 'lucide-react';
+import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import { createSupabaseBrowserClient } from "@/lib/supabase/browser-client";
+import { PasswordInput } from "@/components/password-input";
+import { Mail } from "lucide-react";
 
 export default function SignupPage() {
   const supabase = createSupabaseBrowserClient();
   const router = useRouter();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -55,14 +55,16 @@ export default function SignupPage() {
         </div>
         <h1 className="text-xl font-semibold">Check your email</h1>
         <p className="text-sm text-slate-400">
-          We sent a confirmation link to <span className="text-slate-200">{email}</span>
+          We sent a confirmation link to{" "}
+          <span className="text-slate-200">{email}</span>
         </p>
         <p className="text-xs text-slate-500">
-          Click the link in your email to complete signup and set up your profile.
+          Click the link in your email to complete signup and set up your
+          profile.
         </p>
         <button
           type="button"
-          onClick={() => router.push('/login')}
+          onClick={() => router.push("/login")}
           className="btn btn-secondary w-full mt-4"
         >
           Back to login
@@ -84,7 +86,7 @@ export default function SignupPage() {
           type="email"
           required
           className="input"
-          placeholder='Enter Email'
+          placeholder="Enter Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
@@ -107,14 +109,14 @@ export default function SignupPage() {
         disabled={loading}
         className="btn btn-primary w-full"
       >
-        {loading ? 'Creating account...' : 'Sign up'}
+        {loading ? "Creating account..." : "Sign up"}
       </button>
 
       <p className="text-xs text-center text-[var(--color-text-muted)]">
-        Already have an account?{' '}
+        Already have an account?{" "}
         <button
           type="button"
-          onClick={() => router.push('/login')}
+          onClick={() => router.push("/login")}
           className="btn-link"
         >
           Log in

@@ -1,25 +1,32 @@
-import { ReactNode } from 'react';
-import { redirect } from 'next/navigation';
-import Link from 'next/link';
-import { createSupabaseServerClient } from '@/lib/supabase/server-client';
-import { getCurrentUserWithProfile } from '@/lib/queries';
-import { getAvatarClass } from '@/types';
-import { LogoutButton } from '@/components/logout-button';
-import { Header } from '@/components/header';
+import { ReactNode } from "react";
+import { redirect } from "next/navigation";
+import Link from "next/link";
+import { createSupabaseServerClient } from "@/lib/supabase/server-client";
+import { getCurrentUserWithProfile } from "@/lib/queries";
+import { getAvatarClass } from "@/types";
+import { LogoutButton } from "@/components/logout-button";
+import { Header } from "@/components/header";
+import LightPillarBackground from "@/components/lightpilar-backgorund";
 
-export default async function DashboardLayout({ children }: { children: ReactNode }) {
+export default async function DashboardLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const supabase = await createSupabaseServerClient();
   const { user, profile } = await getCurrentUserWithProfile(supabase);
 
   if (!user) {
-    redirect('/login');
+    redirect("/login");
   }
 
-  const displayName = profile?.display_name || user.email || 'Ski friend';
+  const displayName = profile?.display_name || user.email || "Ski friend";
   const avatarClass = getAvatarClass(profile?.avatar_url);
 
   return (
     <div className="page-container">
+      {/* TODO Maybe change light pillar to plasma */}
+      <LightPillarBackground />
       <Header
         isAuthenticated={true}
         rightSlot={
@@ -38,10 +45,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
           </>
         }
       />
-
-      <main className="page-content">
-        {children}
-      </main>
+      <main className="page-content">{children}</main>
     </div>
   );
 }

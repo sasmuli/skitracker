@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { FormEvent, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { createSupabaseBrowserClient } from '@/lib/supabase/browser-client';
-import { PasswordInput } from '@/components/password-input';
+import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import { createSupabaseBrowserClient } from "@/lib/supabase/browser-client";
+import { PasswordInput } from "@/components/password-input";
 
 export default function LoginPage() {
   const supabase = createSupabaseBrowserClient();
   const router = useRouter();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -32,7 +32,7 @@ export default function LoginPage() {
       return;
     }
 
-    router.push('/dashboard');
+    router.push("/dashboard");
   }
 
   return (
@@ -48,7 +48,7 @@ export default function LoginPage() {
           type="email"
           required
           className="input"
-          placeholder='Enter Email'
+          placeholder="Enter Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
@@ -56,11 +56,7 @@ export default function LoginPage() {
 
       <div className="space-y-1">
         <label className="label">Password</label>
-        <PasswordInput
-          value={password}
-          onChange={setPassword}
-          required
-        />
+        <PasswordInput value={password} onChange={setPassword} required />
       </div>
 
       {errorMsg && <p className="error-text">{errorMsg}</p>}
@@ -70,14 +66,14 @@ export default function LoginPage() {
         disabled={loading}
         className="btn btn-primary w-full"
       >
-        {loading ? 'Logging in...' : 'Log in'}
+        {loading ? "Logging in..." : "Log in"}
       </button>
 
       <p className="text-xs text-center text-[var(--color-text-muted)]">
-        Need an account?{' '}
+        Need an account?{" "}
         <button
           type="button"
-          onClick={() => router.push('/signup')}
+          onClick={() => router.push("/signup")}
           className="btn-link"
         >
           Sign up

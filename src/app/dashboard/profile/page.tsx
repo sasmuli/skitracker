@@ -1,58 +1,59 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { createSupabaseBrowserClient } from '@/lib/supabase/browser-client';
-import { AVATAR_OPTIONS } from '@/types';
-import { updateProfile } from '@/lib/actions';
-import { PasswordInput } from '@/components/password-input';
-import { User, Mail, Lock, Trash2, Check, AlertTriangle } from 'lucide-react';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { createSupabaseBrowserClient } from "@/lib/supabase/browser-client";
+import { AVATAR_OPTIONS } from "@/types";
+import { updateProfile } from "@/lib/actions";
+import { PasswordInput } from "@/components/password-input";
+import { User, Mail, Lock, Trash2, Check, AlertTriangle } from "lucide-react";
 
 export default function ProfilePage() {
   const supabase = createSupabaseBrowserClient();
   const router = useRouter();
 
   const [loading, setLoading] = useState(true);
-  const [email, setEmail] = useState('');
-  const [displayName, setDisplayName] = useState('');
-  const [avatar, setAvatar] = useState('blue');
+  const [email, setEmail] = useState("");
+  const [displayName, setDisplayName] = useState("");
+  const [avatar, setAvatar] = useState("blue");
 
   // Form states
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileSuccess, setProfileSuccess] = useState(false);
 
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [savingPassword, setSavingPassword] = useState(false);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [passwordSuccess, setPasswordSuccess] = useState(false);
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadProfile() {
-      const { data: { user } } = await supabase.auth.getUser();
-      
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
       if (!user) {
-        router.push('/login');
+        router.push("/login");
         return;
       }
 
-      setEmail(user.email || '');
+      setEmail(user.email || "");
 
       const { data: profile } = await supabase
-        .from('profiles')
-        .select('display_name, avatar_url')
-        .eq('id', user.id)
+        .from("profiles")
+        .select("display_name, avatar_url")
+        .eq("id", user.id)
         .maybeSingle();
 
       if (profile) {
-        setDisplayName(profile.display_name || '');
-        setAvatar(profile.avatar_url || 'blue');
+        setDisplayName(profile.display_name || "");
+        setAvatar(profile.avatar_url || "blue");
       }
 
       setLoading(false);
@@ -86,12 +87,12 @@ export default function ProfilePage() {
     setPasswordSuccess(false);
 
     if (newPassword.length < 6) {
-      setPasswordError('Password must be at least 6 characters.');
+      setPasswordError("Password must be at least 6 characters.");
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setPasswordError('Passwords do not match.');
+      setPasswordError("Passwords do not match.");
       return;
     }
 
@@ -109,16 +110,15 @@ export default function ProfilePage() {
     }
 
     setPasswordSuccess(true);
-    setCurrentPassword('');
-    setNewPassword('');
-    setConfirmPassword('');
-    
+    setNewPassword("");
+    setConfirmPassword("");
+
     setTimeout(() => setPasswordSuccess(false), 3000);
   }
 
   async function handleDeleteAccount() {
-    if (deleteConfirmText !== 'DELETE') {
-      setDeleteError('Please type DELETE to confirm.');
+    if (deleteConfirmText !== "DELETE") {
+      setDeleteError("Please type DELETE to confirm.");
       return;
     }
 
@@ -127,10 +127,12 @@ export default function ProfilePage() {
 
     try {
       // Get the current session for the auth header
-      const { data: { session } } = await supabase.auth.getSession();
-      
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
       if (!session) {
-        setDeleteError('Not authenticated.');
+        setDeleteError("Not authenticated.");
         setDeleting(false);
         return;
       }
@@ -139,10 +141,10 @@ export default function ProfilePage() {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/delete-account`,
         {
-          method: 'POST',
+          method: "POST",
           headers: {
             Authorization: `Bearer ${session.access_token}`,
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         }
       );
@@ -150,16 +152,16 @@ export default function ProfilePage() {
       const data = await response.json();
 
       if (!response.ok) {
-        setDeleteError(data.error || 'Failed to delete account.');
+        setDeleteError(data.error || "Failed to delete account.");
         setDeleting(false);
         return;
       }
 
       // Sign out and redirect
       await supabase.auth.signOut();
-      router.push('/');
+      router.push("/");
     } catch {
-      setDeleteError('Failed to delete account. Please try again.');
+      setDeleteError("Failed to delete account. Please try again.");
       setDeleting(false);
     }
   }
@@ -176,7 +178,9 @@ export default function ProfilePage() {
     <div className="p-6 max-w-2xl mx-auto space-y-6">
       <div>
         <h1 className="text-2xl font-semibold">Profile Settings</h1>
-        <p className="text-sm text-slate-400">Manage your account and preferences</p>
+        <p className="text-sm text-slate-400">
+          Manage your account and preferences
+        </p>
       </div>
 
       {/* Profile Section */}
@@ -208,10 +212,14 @@ export default function ProfilePage() {
                   key={option.id}
                   type="button"
                   onClick={() => setAvatar(option.id)}
-                  className={`avatar-option ${avatar === option.id ? 'avatar-option-selected' : ''}`}
+                  className={`avatar-option ${
+                    avatar === option.id ? "avatar-option-selected" : ""
+                  }`}
                 >
                   <div className={`avatar avatar-lg ${option.class}`} />
-                  <span className="text-[10px] text-slate-400">{option.label}</span>
+                  <span className="text-[10px] text-slate-400">
+                    {option.label}
+                  </span>
                 </button>
               ))}
             </div>
@@ -224,7 +232,7 @@ export default function ProfilePage() {
               disabled={savingProfile}
               className="btn btn-primary"
             >
-              {savingProfile ? 'Saving...' : 'Save Profile'}
+              {savingProfile ? "Saving..." : "Save Profile"}
             </button>
             {profileSuccess && (
               <span className="flex items-center gap-1 text-xs text-green-400">
@@ -277,7 +285,9 @@ export default function ProfilePage() {
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs text-slate-400">Confirm New Password</label>
+            <label className="text-xs text-slate-400">
+              Confirm New Password
+            </label>
             <PasswordInput
               value={confirmPassword}
               onChange={setConfirmPassword}
@@ -297,7 +307,7 @@ export default function ProfilePage() {
               disabled={savingPassword || !newPassword || !confirmPassword}
               className="btn btn-primary"
             >
-              {savingPassword ? 'Updating...' : 'Update Password'}
+              {savingPassword ? "Updating..." : "Update Password"}
             </button>
             {passwordSuccess && (
               <span className="flex items-center gap-1 text-xs text-green-400">
@@ -319,7 +329,8 @@ export default function ProfilePage() {
         {!showDeleteConfirm ? (
           <div>
             <p className="text-sm text-slate-400 mb-4">
-              Permanently delete your account and all associated data. This action cannot be undone.
+              Permanently delete your account and all associated data. This
+              action cannot be undone.
             </p>
             <button
               type="button"
@@ -334,16 +345,20 @@ export default function ProfilePage() {
             <div className="flex items-start gap-3 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
               <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm text-red-300 font-medium">Are you absolutely sure?</p>
+                <p className="text-sm text-red-300 font-medium">
+                  Are you absolutely sure?
+                </p>
                 <p className="text-xs text-red-400/80 mt-1">
-                  This will permanently delete your account, profile, and all ski day records.
+                  This will permanently delete your account, profile, and all
+                  ski day records.
                 </p>
               </div>
             </div>
 
             <div className="space-y-1">
               <label className="text-xs text-slate-400">
-                Type <span className="text-red-400 font-mono">DELETE</span> to confirm
+                Type <span className="text-red-400 font-mono">DELETE</span> to
+                confirm
               </label>
               <input
                 type="text"
@@ -363,7 +378,7 @@ export default function ProfilePage() {
                 type="button"
                 onClick={() => {
                   setShowDeleteConfirm(false);
-                  setDeleteConfirmText('');
+                  setDeleteConfirmText("");
                   setDeleteError(null);
                 }}
                 className="btn btn-secondary"
@@ -373,10 +388,10 @@ export default function ProfilePage() {
               <button
                 type="button"
                 onClick={handleDeleteAccount}
-                disabled={deleting || deleteConfirmText !== 'DELETE'}
+                disabled={deleting || deleteConfirmText !== "DELETE"}
                 className="btn btn-danger"
               >
-                {deleting ? 'Deleting...' : 'Delete My Account'}
+                {deleting ? "Deleting..." : "Delete My Account"}
               </button>
             </div>
           </div>

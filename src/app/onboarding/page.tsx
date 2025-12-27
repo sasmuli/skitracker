@@ -1,41 +1,43 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { createSupabaseBrowserClient } from '@/lib/supabase/browser-client';
-import { AVATAR_OPTIONS } from '@/types';
-import { updateProfile } from '@/lib/actions';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { createSupabaseBrowserClient } from "@/lib/supabase/browser-client";
+import { AVATAR_OPTIONS } from "@/types";
+import { updateProfile } from "@/lib/actions";
 
 export default function OnboardingPage() {
   const supabase = createSupabaseBrowserClient();
   const router = useRouter();
 
-  const [displayName, setDisplayName] = useState('');
-  const [avatar, setAvatar] = useState<string>('blue');
+  const [displayName, setDisplayName] = useState("");
+  const [avatar, setAvatar] = useState<string>("blue");
   const [loading, setLoading] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
 
   useEffect(() => {
     async function checkAuthAndLoadProfile() {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
       if (!user) {
-        router.push('/login');
+        router.push("/login");
         return;
       }
 
       // Load existing profile if any
       const { data: profile } = await supabase
-        .from('profiles')
-        .select('display_name, avatar_url')
-        .eq('id', user.id)
+        .from("profiles")
+        .select("display_name, avatar_url")
+        .eq("id", user.id)
         .maybeSingle();
 
       if (profile) {
         if (profile.display_name) setDisplayName(profile.display_name);
         if (profile.avatar_url) setAvatar(profile.avatar_url);
       }
-      
+
       setCheckingAuth(false);
     }
 
@@ -56,7 +58,7 @@ export default function OnboardingPage() {
       return;
     }
 
-    router.push('/dashboard');
+    router.push("/dashboard");
   }
 
   if (checkingAuth) {
@@ -78,7 +80,7 @@ export default function OnboardingPage() {
             type="text"
             required
             className="input"
-            placeholder="e.g. nickname" 
+            placeholder="e.g. nickname"
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
           />
@@ -92,10 +94,14 @@ export default function OnboardingPage() {
                 key={option.id}
                 type="button"
                 onClick={() => setAvatar(option.id)}
-                className={`avatar-option ${avatar === option.id ? 'avatar-option-selected' : ''}`}
+                className={`avatar-option ${
+                  avatar === option.id ? "avatar-option-selected" : ""
+                }`}
               >
                 <div className={`avatar avatar-lg ${option.class}`} />
-                <span className="text-[10px] text-slate-400">{option.label}</span>
+                <span className="text-[10px] text-slate-400">
+                  {option.label}
+                </span>
               </button>
             ))}
           </div>
@@ -106,7 +112,7 @@ export default function OnboardingPage() {
           disabled={loading}
           className="btn btn-primary w-full"
         >
-          {loading ? 'Saving...' : 'Continue'}
+          {loading ? "Saving..." : "Continue"}
         </button>
       </form>
     </div>
