@@ -274,18 +274,54 @@ a:hover {
     0 0 20px rgba(255, 255, 255, 0.05);
 }
 
-/* Header glass */
+/* Header glass - show on desktop (>=67rem), hide on mobile */
 .glass-header {
+  display: none;
   background: linear-gradient(
     to bottom right,
     rgba(39, 39, 39, 0.5) 20%,
     rgba(0, 0, 0, 0.4) 65%
-      /*rgba(39, 39, 39, 0.85) 20%,
-    rgba(0, 0, 0, 0.75) 65%*/
   );
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+@media (min-width: 67rem) {
+  .glass-header {
+    display: flex;
+  }
+}
+
+/* Mobile Card Nav - show on mobile (<67rem), hide on desktop */
+.mobile-card-nav {
+  display: block;
+}
+
+@media (min-width: 67rem) {
+  .mobile-card-nav {
+    display: none;
+  }
+}
+
+/* Hide auth buttons in mobile card nav when layout swaps (below md/768px) */
+.mobile-card-nav .card-nav-right-mobile .auth-buttons-desktop {
+  display: none;
+}
+
+/* Nav cards in CardNav dropdown - match glass-card styling */
+.nav-card {
+  background: linear-gradient(
+    to bottom right,
+    rgba(39, 39, 39, 0.75) 20%,
+    rgba(0, 0, 0, 0.6) 65%
+  );
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
 }
 
 /* Mobile menu dropdown */

@@ -188,6 +188,8 @@ export default function AddSkiDayPage() {
   const isLastDay = currentDayIndex === selectedDates.length - 1;
   const isFirstDay = currentDayIndex === 0;
 
+  //TODO maybe add stepper from https://reactbits.dev/components/stepper
+
   // Step 1: Select dates
   if (step === "select-dates") {
     return (

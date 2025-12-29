@@ -6,6 +6,7 @@ import { getCurrentUserWithProfile } from "@/lib/queries";
 import { getAvatarClass } from "@/types";
 import { LogoutButton } from "@/components/logout-button";
 import { Header } from "@/components/header";
+import { MobileCardNav } from "@/components/mobile-card-nav";
 import LightPillarBackground from "@/components/lightpilar-backgorund";
 
 export default async function DashboardLayout({
@@ -23,28 +24,27 @@ export default async function DashboardLayout({
   const displayName = profile?.display_name || user.email || "Ski friend";
   const avatarClass = getAvatarClass(profile?.avatar_url);
 
+  const rightSlot = (
+    <>
+      <Link href="/dashboard/profile" className="profile-link">
+        <div className={`avatar ${avatarClass}`} />
+        <div className="hidden sm:flex flex-col">
+          <span className="text-xs font-medium">{displayName}</span>
+          <span className="text-[10px] text-[var(--color-text-muted)]">
+            {user.email}
+          </span>
+        </div>
+      </Link>
+      <LogoutButton />
+    </>
+  );
+
   return (
     <div className="page-container">
       {/* TODO Maybe change light pillar to plasma */}
       <LightPillarBackground />
-      <Header
-        isAuthenticated={true}
-        rightSlot={
-          <>
-            <Link href="/dashboard/profile" className="profile-link">
-              <div className={`avatar ${avatarClass}`} />
-              <div className="hidden sm:flex flex-col">
-                <span className="text-xs font-medium">{displayName}</span>
-                <span className="text-[10px] text-[var(--color-text-muted)]">
-                  {user.email}
-                </span>
-              </div>
-            </Link>
-
-            <LogoutButton />
-          </>
-        }
-      />
+      <MobileCardNav rightSlot={rightSlot} isAuthenticated={true} />
+      <Header rightSlot={rightSlot} isAuthenticated={true} />
       <main className="page-content">{children}</main>
     </div>
   );

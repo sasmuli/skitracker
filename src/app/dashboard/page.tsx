@@ -10,6 +10,8 @@ import {
   getResorts,
 } from "@/lib/queries";
 
+//TODO Look if this can be used anywhere https://reactbits.dev/components/magic-bento
+
 export default async function DashboardPage() {
   const supabase = await createSupabaseServerClient();
   const { user, profile } = await getCurrentUserWithProfile(supabase);
