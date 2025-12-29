@@ -34,52 +34,11 @@
     display: none !important;
   }
 
-  /* Profile dropdown toggle - show on mobile */
-  .profile-dropdown-toggle {
-    display: flex !important;
-  }
-
-  /* Profile dropdown menu */
-  .profile-dropdown-menu {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    margin-top: 0.5rem;
-    min-width: 10rem;
-    background: linear-gradient(
-      to bottom right,
-      rgba(39, 39, 39, 0.98) 20%,
-      rgba(0, 0, 0, 0.95) 65%
-    );
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    border-radius: 0.75rem;
-    box-shadow: var(--shadow-lg);
-    backdrop-filter: blur(var(--glass-blur));
-    -webkit-backdrop-filter: blur(var(--glass-blur));
-    z-index: 100;
-    padding: 0.5rem;
-  }
-
-  .profile-dropdown-menu .btn {
-    width: 100%;
-    justify-content: flex-start;
-    margin-bottom: 0.25rem;
-  }
-
-  .profile-dropdown-menu .btn:last-child {
-    margin-bottom: 0;
-  }
-
   /* Snowflake rating - smaller on mobile */
   .snowflake-rating-container .snowflake-icon {
     width: 2.5rem !important;
     height: 2.5rem !important;
   }
-}
-
-/* Profile dropdown - hidden by default on desktop */
-.profile-dropdown-toggle {
-  display: none;
 }
 
 /* Auth buttons - visible by default on desktop */
@@ -304,11 +263,6 @@ a:hover {
   }
 }
 
-/* Hide auth buttons in mobile card nav when layout swaps (below md/768px) */
-.mobile-card-nav .card-nav-right-mobile .auth-buttons-desktop {
-  display: none;
-}
-
 /* Nav cards in CardNav dropdown - match glass-card styling */
 .nav-card {
   background: linear-gradient(
@@ -324,41 +278,17 @@ a:hover {
   transition: all 0.3s ease;
 }
 
-/* Mobile menu dropdown */
-.mobile-menu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: linear-gradient(
-    to bottom right,
-    rgba(39, 39, 39, 0.98) 20%,
-    rgba(0, 0, 0, 0.95) 65%
-  );
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  z-index: 50;
+/* Stats cards grid - single column on mobile, 5 cols on desktop */
+.stats-cards-grid {
+  grid-template-columns: 1fr;
+  padding-bottom: 2rem;
 }
 
-.mobile-menu-nav {
-  display: flex;
-  flex-direction: column;
-  padding: 1rem;
-  gap: 0.25rem;
-}
-
-.mobile-menu-link {
-  padding: 0.75rem 1rem;
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
-  border-radius: 0.5rem;
-  transition: all 0.2s ease;
-}
-
-.mobile-menu-link:hover {
-  color: var(--color-text);
-  background: rgba(255, 255, 255, 0.05);
+@media (min-width: 48.125rem) {
+  .stats-cards-grid {
+    grid-template-columns: repeat(5, 1fr);
+    padding-bottom: 0;
+  }
 }
 
 /* Profile section header line */

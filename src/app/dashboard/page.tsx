@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createSupabaseServerClient } from "@/lib/supabase/server-client";
 import { SkiCalendarWithDialog } from "@/components/ski-calendar-with-dialog";
 import { SkiTypeInfo } from "@/components/ski-type-info";
+import { StatsCards } from "@/components/stats-cards";
 import { Plus } from "lucide-react";
 import {
   getSkiDays,
@@ -51,30 +52,13 @@ export default async function DashboardPage() {
       <SkiCalendarWithDialog skiDays={skiDays || []} resorts={resorts} />
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="glass-card !p-4 text-center">
-          <p className="text-2xl font-bold text-sky-400">{stats.totalDays}</p>
-          <p className="text-xs text-slate-400">Ski Days</p>
-        </div>
-        <div className="glass-card !p-4 text-center">
-          <p className="text-2xl font-bold text-sky-400">
-            {stats.totalHours.toFixed(1)}
-          </p>
-          <p className="text-xs text-slate-400">Total Hours</p>
-        </div>
-        <div className="glass-card !p-4 text-center">
-          <p className="text-2xl font-bold text-sky-400">
-            {stats.avgRating ? stats.avgRating.toFixed(1) : "-"}
-          </p>
-          <p className="text-xs text-slate-400">Avg Rating</p>
-        </div>
-        <div className="glass-card !p-4 text-center">
-          <p className="text-2xl font-bold text-sky-400">
-            {stats.uniqueResorts}
-          </p>
-          <p className="text-xs text-slate-400">Resorts</p>
-        </div>
-      </div>
+      <StatsCards
+        totalDays={stats.totalDays}
+        totalHours={stats.totalHours}
+        totalDistance={stats.totalDistance}
+        avgRating={stats.avgRating}
+        uniqueResorts={stats.uniqueResorts}
+      />
 
       {/* Mobile fixed button at bottom */}
       <Link

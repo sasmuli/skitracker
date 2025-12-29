@@ -47,6 +47,7 @@ export async function getSkiDays(
 export function getSkiDayStats(skiDays: SkiDay[]) {
   const totalDays = skiDays.length;
   const totalHours = skiDays.reduce((sum, d) => sum + (d.hours || 0), 0);
+  const totalDistance = skiDays.reduce((sum, d) => sum + (d.distance_km || 0), 0);
   const avgRating = skiDays.length
     ? skiDays.reduce((sum, d) => sum + (d.rating || 0), 0) /
       skiDays.filter((d) => d.rating).length
@@ -55,5 +56,5 @@ export function getSkiDayStats(skiDays: SkiDay[]) {
     skiDays.filter((d) => d.resort).map((d) => d.resort?.id)
   ).size;
 
-  return { totalDays, totalHours, avgRating, uniqueResorts };
+  return { totalDays, totalHours, totalDistance, avgRating, uniqueResorts };
 }
