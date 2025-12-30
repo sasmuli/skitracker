@@ -101,7 +101,8 @@ body {
   width: 100%;
   overflow-x: hidden;
   color-scheme: dark;
-  background: linear-gradient(180deg, #1a0a2e 0%, #0d0015 100%);
+  /*background: linear-gradient(180deg, #1a0a2e 0%, #0d0015 100%);*/
+  background: linear-gradient(180deg, #700becff 30%rgba(30, 252, 1, 1)15 70%);
 }
 
 /* Do NOT force 100% heights; let the document be content-driven */
