@@ -96,14 +96,22 @@ body {
   color-scheme: dark;
 }
 
+html {
+  /* Prevent pull-to-refresh on mobile */
+  overscroll-behavior-y: contain;
+}
+
 body {
   min-height: 100vh;
+  min-height: 100dvh; /* Dynamic viewport height for mobile */
   color: var(--foreground);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
   background: transparent;
   position: relative;
   overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -587,8 +595,12 @@ select:autofill {
 
 .page-container {
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
+  position: relative;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
 }
 
 .page-content {
@@ -599,6 +611,7 @@ select:autofill {
   width: 100%;
   position: relative;
   z-index: 3;
+  -webkit-overflow-scrolling: touch;
 }
 
 .page-center {

@@ -8,7 +8,33 @@ type CookieToSet = {
   options?: CookieOptions;
 };
 
+const SITE_PASSWORD = process.env.SITE_PASSWORD;
+const PASSWORD_COOKIE_NAME = 'site-access';
+
 export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // Password protection (skip if no password is set)
+  if (SITE_PASSWORD) {
+    const isPublicPath =
+      pathname.startsWith('/_next') ||
+      pathname.startsWith('/api') ||
+      pathname.startsWith('/favicon') ||
+      pathname.endsWith('.png') ||
+      pathname.endsWith('.ico') ||
+      pathname === '/site-password';
+
+    if (!isPublicPath) {
+      const accessCookie = request.cookies.get(PASSWORD_COOKIE_NAME);
+      if (accessCookie?.value !== SITE_PASSWORD) {
+        const url = request.nextUrl.clone();
+        url.pathname = '/site-password';
+        url.searchParams.set('redirect', pathname);
+        return NextResponse.redirect(url);
+      }
+    }
+  }
+
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -20,15 +46,12 @@ export async function proxy(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet: CookieToSet[]) {
-          // Update request cookies (for the current request lifecycle)
           cookiesToSet.forEach(({ name, value }) => {
             request.cookies.set(name, value);
           });
 
-          // Re-create response so it includes the updated request
           supabaseResponse = NextResponse.next({ request });
 
-          // Set cookies on the response (what the browser receives)
           cookiesToSet.forEach(({ name, value, options }) => {
             supabaseResponse.cookies.set(name, value, options);
           });
@@ -37,7 +60,6 @@ export async function proxy(request: NextRequest) {
     }
   );
 
-  // Refresh session - required so auth cookies stay in sync
   await supabase.auth.getUser();
 
   return supabaseResponse;

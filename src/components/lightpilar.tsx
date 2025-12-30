@@ -82,7 +82,9 @@ const LightPillar: React.FC<LightPillarProps> = ({
     }
 
     renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    // Lower pixel ratio on mobile for better performance
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    renderer.setPixelRatio(isMobile ? 1 : Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
