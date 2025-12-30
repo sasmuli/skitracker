@@ -103,6 +103,7 @@ body {
   min-height: 100%;
   overflow-x: hidden;
   color-scheme: dark;
+  background: transparent;
 }
 
 body {

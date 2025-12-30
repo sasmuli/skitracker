@@ -11,7 +11,10 @@ export default function LightPillarBackground() {
   }, []);
 
   return (
-    <div className="fixed inset-0 -z-10 overflow-hidden" style={{ height: "100dvh" }}>
+    <div
+      className="fixed inset-0 -z-10 overflow-hidden pointer-events-none"
+      style={{ height: "100svh" }}
+    >
       <LightPillar
         topColor="#5227FF"
         bottomColor="#FF9FFC"
