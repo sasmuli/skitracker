@@ -657,8 +657,7 @@ select:autofill {
   flex: 1;
   padding: 1.5rem 1rem;
   padding-top: calc(1.5rem + var(--sat) + var(--header-h));
-  /*padding-bottom: 0;*/
-  padding-bottom: 5rem;
+  padding-bottom: 0;
   
 
   max-width: 72rem;
