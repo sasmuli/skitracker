@@ -11,7 +11,7 @@ export function FloatingLinesBackground() {
   }, []);
 
   return (
-    <div className="fixed inset-0 -z-10 overflow-hidden">
+    <div className="fixed inset-0 -z-10 overflow-hidden" style={{ height: "100dvh" }}>
       <FloatingLines
         enabledWaves={["top", "middle", "bottom"]}
         lineCount={[5, 5, 5]}
