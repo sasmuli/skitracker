@@ -103,10 +103,6 @@ body {
   min-height: 100%;
   overflow-x: hidden;
   color-scheme: dark;
-
-  /* This is what iOS uses behind the bottom toolbar */
-  background: linear-gradient(180deg, #1a0a2e 0%, #0d0015 100%);
-  background-color: #0d0015; /* fallback */
 }
 
 body {
@@ -138,7 +134,7 @@ body {
   position: relative;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-} */
+}  */
 
 /* ─────────────── Typography ─────────────── */
 h1,
