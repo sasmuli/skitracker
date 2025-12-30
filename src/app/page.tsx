@@ -56,7 +56,7 @@ export default async function HomePage() {
 
       <main className="flex flex-col items-center justify-center py-10 pt-[calc(var(--sat)+56px+2.5rem)]">
         <h1 className="text-3xl font-bold mb-4">Welcome to Ski Tracker</h1>
-        <p className="mb-6">Landing page</p>
+        <p className="mb-6">Landing pageeee</p>
 
         {user ? (
           <Link href="/dashboard" className="btn btn-primary">
