@@ -626,30 +626,15 @@ select:autofill {
   overflow-x: hidden;
 }
 
-/* .page-content {
-  flex: 1;
-  padding: 1.5rem 1rem;
-
-  padding-top: calc(1.5rem + var(--sat) + var(--header-h));
-  padding-bottom: 0;
-
-  max-width: 72rem;
-  margin: 0 auto;
-  width: 100%;
-  position: relative;
-  z-index: 3;
-  -webkit-overflow-scrolling: touch;
-} */
-
-/* ─────────────── Content does not go behind tab bar ─────────────── */
-
 .page-content {
   flex: 1;
   padding: 1.5rem 1rem;
+  /*comment out this*/
+  min-height: 100dvh;
 
   padding-top: calc(1.5rem + var(--sat) + var(--header-h));
-
-  padding-bottom: calc(1.5rem + var(--sab));
+  padding-bottom: 0;
+  
 
   max-width: 72rem;
   margin: 0 auto;
@@ -657,7 +642,9 @@ select:autofill {
   position: relative;
   z-index: 3;
   -webkit-overflow-scrolling: touch;
-}
+} 
+
+
 
 
 .page-center {
