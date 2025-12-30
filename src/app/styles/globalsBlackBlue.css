@@ -1458,6 +1458,13 @@ select:autofill {
   -webkit-overflow-scrolling: touch;
 }
 
+@media (min-width: 640px) {
+  .ski-day-dialog-overlay {
+    align-items: center;
+    padding-top: 1rem;
+  }
+}
+
 .ski-day-dialog {
   width: 100%;
   max-width: 24rem;
