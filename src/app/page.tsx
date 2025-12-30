@@ -56,31 +56,31 @@ export default async function HomePage() {
 
       <main className="flex flex-col items-center py-10 pt-[calc(var(--sat)+56px+2.5rem)]">
         <h1 className="text-3xl font-bold mb-4">Welcome to Ski Tracker</h1>
-        <p className="mb-6">Landing pageeee</p>
+        <p className="mb-6">Landing pageeee1</p>
         <h1 className="text-3xl font-bold mb-4">Welcome to Ski Tracker</h1>
-        <p className="mb-6">Landing pageeee</p>
+        <p className="mb-6">Landing pageeee2</p>
         <h1 className="text-3xl font-bold mb-4">Welcome to Ski Tracker</h1>
-        <p className="mb-6">Landing pageeee</p>
+        <p className="mb-6">Landing pageeee3</p>
         <h1 className="text-3xl font-bold mb-4">Welcome to Ski Tracker</h1>
-        <p className="mb-6">Landing pageeee</p>
+        <p className="mb-6">Landing pageeee4</p>
         <h1 className="text-3xl font-bold mb-4">Welcome to Ski Tracker</h1>
-        <p className="mb-6">Landing pageeee</p>
+        <p className="mb-6">Landing pageeee5</p>
         <h1 className="text-3xl font-bold mb-4">Welcome to Ski Tracker</h1>
-        <p className="mb-6">Landing pageeee</p>
+        <p className="mb-6">Landing pageeee6</p>
         <h1 className="text-3xl font-bold mb-4">Welcome to Ski Tracker</h1>
-        <p className="mb-6">Landing pageeee</p>
+        <p className="mb-6">Landing pageeee7</p>
         <h1 className="text-3xl font-bold mb-4">Welcome to Ski Tracker</h1>
-        <p className="mb-6">Landing pageeee</p>
+        <p className="mb-6">Landing pageeee8</p>
         <h1 className="text-3xl font-bold mb-4">Welcome to Ski Tracker</h1>
-        <p className="mb-6">Landing pageeee</p>
+        <p className="mb-6">Landing pageeee9</p>
         <h1 className="text-3xl font-bold mb-4">Welcome to Ski Tracker</h1>
-        <p className="mb-6">Landing pageeee</p>
+        <p className="mb-6">Landing pageeee10</p>
         <h1 className="text-3xl font-bold mb-4">Welcome to Ski Tracker</h1>
-        <p className="mb-6">Landing pageeee</p>
+        <p className="mb-6">Landing pageeee11</p>
         <h1 className="text-3xl font-bold mb-4">Welcome to Ski Tracker</h1>
-        <p className="mb-6">Landing pageeee</p>
+        <p className="mb-6">Landing pageeee12</p>
         <h1 className="text-3xl font-bold mb-4">Welcome to Ski Tracker</h1>
-        <p className="mb-6">Landing pageeee</p>
+        <p className="mb-6">Landing pageeee13</p>
 
         {user ? (
           <Link href="/dashboard" className="btn btn-primary">
