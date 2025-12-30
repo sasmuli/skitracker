@@ -275,9 +275,9 @@ a:hover {
   padding-right: var(--sar);
 }
 
-/* Card Nav - solid background */
+/* Card Nav - solid background only when expanded */
 .card-nav {
-  background: #0a0a0f;
+  background: transparent;
   border-radius: 0 0 1rem 1rem;
 }
 
