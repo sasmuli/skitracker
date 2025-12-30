@@ -24,7 +24,7 @@ export default async function DashboardPage() {
   const displayName = profile?.display_name || "Skier";
 
   return (
-    <div className="p-4 md:p-6 space-y-6">
+    <div className="space-y-6 pb-[calc(var(--sab)+72px)] sm:pb-0">
       {/* Welcome Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -64,7 +64,7 @@ export default async function DashboardPage() {
       <Link
         href="/dashboard/add-day"
         className="btn-mobile btn-primary fixed left-4 right-4 justify-center !inline-flex sm:!hidden"
-        style={{ bottom: 'calc(1rem + var(--sab))' }}
+        style={{ bottom: "calc(var(--sab) + 1rem)" }}
       >
         <Plus className="w-4 h-4" />
         Add Ski Day

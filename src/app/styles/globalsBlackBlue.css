@@ -88,6 +88,8 @@
   --sab: env(safe-area-inset-bottom);
   --sal: env(safe-area-inset-left);
 
+  --header-h: 56px;
+
   color-scheme: dark;
 }
 
@@ -627,15 +629,18 @@ select:autofill {
   flex-direction: column;
   position: relative;
   overflow-x: hidden;
-  padding-top: var(--sat);
-  padding-left: var(--sal);
-  padding-right: var(--sar);
 }
 
 .page-content {
   flex: 1;
   padding: 1.5rem 1rem;
+
+  /* IMPORTANT: push content below fixed header + safe area */
+  padding-top: calc(1.5rem + var(--sat) + var(--header-h));
+
+  /* keep your bottom safe-area padding */
   padding-bottom: calc(1.5rem + var(--sab));
+
   max-width: 72rem;
   margin: 0 auto;
   width: 100%;
@@ -643,6 +648,7 @@ select:autofill {
   z-index: 3;
   -webkit-overflow-scrolling: touch;
 }
+
 
 .page-center {
   flex: 1;
