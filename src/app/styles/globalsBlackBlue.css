@@ -640,8 +640,8 @@ select:autofill {
   /* IMPORTANT: push content below fixed header + safe area */
   padding-top: calc(1.5rem + var(--sat) + var(--header-h));
 
-  /* keep your bottom safe-area padding */
-  padding-bottom: calc(1.5rem + var(--sab));
+  /* No bottom safe-area padding - let content scroll behind Safari toolbar */
+  padding-bottom: 5rem;
 
   max-width: 72rem;
   margin: 0 auto;
