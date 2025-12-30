@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Lock } from 'lucide-react';
 
-export default function SitePasswordPage() {
+function PasswordForm() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -75,5 +75,25 @@ export default function SitePasswordPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function SitePasswordPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center p-4 bg-black">
+        <div className="glass-card w-full max-w-sm animate-pulse">
+          <div className="flex justify-center mb-6">
+            <div className="w-16 h-16 rounded-full bg-sky-500/20" />
+          </div>
+          <div className="h-6 bg-slate-700 rounded mb-2 mx-auto w-32" />
+          <div className="h-4 bg-slate-700 rounded mb-6 mx-auto w-48" />
+          <div className="h-10 bg-slate-700 rounded mb-4" />
+          <div className="h-10 bg-slate-700 rounded" />
+        </div>
+      </div>
+    }>
+      <PasswordForm />
+    </Suspense>
   );
 }
