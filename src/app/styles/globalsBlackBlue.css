@@ -82,6 +82,12 @@
   --color-error: #f87171;
   --color-warning: #fbbf24;
 
+  /* iOS Safe Area Insets */
+  --sat: env(safe-area-inset-top);
+  --sar: env(safe-area-inset-right);
+  --sab: env(safe-area-inset-bottom);
+  --sal: env(safe-area-inset-left);
+
   color-scheme: dark;
 }
 
@@ -107,11 +113,6 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Safe area padding for iPhone notch/home indicator */
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
 }
 
 /* ─────────────── Typography ─────────────── */
@@ -258,6 +259,34 @@ a:hover {
   }
 }
 
+/* Card Nav Container - fixed at top with safe area */
+.card-nav-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 99;
+  padding-top: var(--sat);
+  padding-left: var(--sal);
+  padding-right: var(--sar);
+}
+
+/* Card Nav - solid background only when expanded */
+.card-nav {
+  background: transparent;
+  border-radius: 0 0 1rem 1rem;
+}
+
+.card-nav.open {
+  background: linear-gradient(
+    to bottom,
+    rgba(15, 15, 20, 0.98) 0%,
+    rgba(10, 10, 15, 0.95) 100%
+  );
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
 /* Mobile Card Nav - show on mobile (<67rem), hide on desktop */
 .mobile-card-nav {
   display: block;
@@ -269,16 +298,16 @@ a:hover {
   }
 }
 
-/* Nav cards in CardNav dropdown - match glass-card styling */
+/* Nav cards in CardNav dropdown - solid background for readability */
 .nav-card {
   background: linear-gradient(
     to bottom right,
-    rgba(39, 39, 39, 0.75) 20%,
-    rgba(0, 0, 0, 0.6) 65%
+    rgba(25, 25, 30, 0.98) 20%,
+    rgba(10, 10, 15, 0.95) 65%
   );
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
   overflow: hidden;
   transition: all 0.3s ease;
@@ -598,11 +627,15 @@ select:autofill {
   flex-direction: column;
   position: relative;
   overflow-x: hidden;
+  padding-top: var(--sat);
+  padding-left: var(--sal);
+  padding-right: var(--sar);
 }
 
 .page-content {
   flex: 1;
   padding: 1.5rem 1rem;
+  padding-bottom: calc(1.5rem + var(--sab));
   max-width: 72rem;
   margin: 0 auto;
   width: 100%;
@@ -617,6 +650,7 @@ select:autofill {
   align-items: center;
   justify-content: center;
   padding: 1.5rem 1rem;
+  padding-bottom: calc(1.5rem + var(--sab));
   position: relative;
   z-index: 3;
 }

@@ -63,7 +63,8 @@ export default async function DashboardPage() {
       {/* Mobile fixed button at bottom */}
       <Link
         href="/dashboard/add-day"
-        className="btn-mobile btn-primary fixed bottom-4 left-4 right-4 justify-center !inline-flex sm:!hidden"
+        className="btn-mobile btn-primary fixed left-4 right-4 justify-center !inline-flex sm:!hidden"
+        style={{ bottom: 'calc(1rem + var(--sab))' }}
       >
         <Plus className="w-4 h-4" />
         Add Ski Day
