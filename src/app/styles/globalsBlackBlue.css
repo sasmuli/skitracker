@@ -102,6 +102,8 @@ body {
   width: 100%;
   overflow-x: hidden;
   color-scheme: dark;
+  /* Match WebGL background gradient for safe-area regions */
+  background: linear-gradient(180deg, #1a0a2e 0%, #0d0015 100%);
 }
 
 body {

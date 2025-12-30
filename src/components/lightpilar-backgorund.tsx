@@ -11,7 +11,7 @@ export default function LightPillarBackground() {
   }, []);
 
   return (
-    <div className="fixed inset-0 -z-10">
+    <div className="fixed inset-0 -z-10 w-screen h-screen">
       <LightPillar
         topColor="#5227FF"
         bottomColor="#FF9FFC"
