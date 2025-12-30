@@ -103,7 +103,6 @@ body {
   min-height: 100%;
   overflow-x: hidden;
   color-scheme: dark;
-  background: transparent;
 }
 
 body {
@@ -656,7 +655,9 @@ select:autofill {
 
   /* IMPORTANT: push content below fixed header + safe area */
   padding-top: calc(1.5rem + var(--sat) + var(--header-h));
-  padding-bottom: 0;
+  /*padding-bottom: 0;*/
+  /* IF i want content not behind tab bar */
+  padding-bottom: calc(1.5rem + var(--sab)); 
 
   max-width: 72rem;
   margin: 0 auto;

@@ -24,7 +24,7 @@ export default async function DashboardPage() {
   const displayName = profile?.display_name || "Skier";
 
   return (
-    <div className="space-y-6 sm:pb-0">
+    <div className="space-y-6 pb-10 sm:pb-0">
       {/* Welcome Header */}
       <div className="flex items-center justify-between">
         <div>
