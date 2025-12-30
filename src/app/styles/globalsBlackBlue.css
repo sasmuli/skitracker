@@ -95,7 +95,7 @@
 
 /* ─────────────── Base / Body (Black from globalsNew) ─────────────── */
 
-html,
+/* html,
 body {
   margin: 0;
   padding: 0;
@@ -111,7 +111,14 @@ body {
   position: relative;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
+} */
+
+/* ─────────────── Base where content does not go behind safari tab bar  ─────────────── */
+
+
+html, body { margin: 0; padding: 0; height: 100%; width: 100%; overflow-x: hidden; color-scheme: dark; /* Match WebGL background gradient for safe-area regions */ background: linear-gradient(180deg, #1a0a2e 0%, #0d0015 100%); } 
+body { min-height: 100vh; min-height: 100dvh; /* Dynamic viewport height for mobile */ color: var(--foreground); font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: transparent; position: relative; overflow-x: hidden; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
 
 /* ─────────────── Typography ─────────────── */
 h1,
@@ -620,6 +627,8 @@ select:autofill {
 
 .page-container {
   min-height: 100vh;
+  /*Comment*/
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -629,11 +638,9 @@ select:autofill {
 .page-content {
   flex: 1;
   padding: 1.5rem 1rem;
-  /*comment out this*/
-  min-height: 100dvh;
-
   padding-top: calc(1.5rem + var(--sat) + var(--header-h));
-  padding-bottom: 0;
+  /*padding-bottom: 0;*/
+  padding-bottom: 5rem;
   
 
   max-width: 72rem;
@@ -643,9 +650,6 @@ select:autofill {
   z-index: 3;
   -webkit-overflow-scrolling: touch;
 } 
-
-
-
 
 .page-center {
   flex: 1;
