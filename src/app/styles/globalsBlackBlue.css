@@ -640,8 +640,8 @@ select:autofill {
   /* IMPORTANT: push content below fixed header + safe area */
   padding-top: calc(1.5rem + var(--sat) + var(--header-h));
 
-  /* No bottom safe-area padding - let content scroll behind Safari bar */
-  padding-bottom: 1.5rem;
+  /* keep your bottom safe-area padding */
+  padding-bottom: calc(1.5rem + var(--sab));
 
   max-width: 72rem;
   margin: 0 auto;
@@ -658,6 +658,7 @@ select:autofill {
   align-items: center;
   justify-content: center;
   padding: 1.5rem 1rem;
+  padding-bottom: calc(1.5rem + var(--sab));
   position: relative;
   z-index: 3;
 }
@@ -1445,12 +1446,10 @@ select:autofill {
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(4px);
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   z-index: 9999;
   padding: 1rem;
-  padding-top: calc(1rem + var(--sat));
-  overflow-y: auto;
 }
 
 .ski-day-dialog {
