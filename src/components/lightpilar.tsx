@@ -75,6 +75,9 @@ const LightPillar: React.FC<LightPillarProps> = ({
         stencil: false,
         depth: false,
       });
+    
+      renderer.setClearColor(0x000000, 0);
+      renderer.setClearAlpha(0);
     } catch (error) {
       console.error("Failed to create WebGL renderer:", error);
       setWebGLSupported(false);
