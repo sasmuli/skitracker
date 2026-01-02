@@ -3,10 +3,10 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createSupabaseServerClient } from "@/lib/supabase/server-client";
 import { getCurrentUserWithProfile } from "@/lib/queries";
-import { getAvatarClass } from "@/types";
 import { LogoutButton } from "@/components/logout-button";
 import { Header } from "@/components/header";
 import { MobileCardNav } from "@/components/mobile-card-nav";
+import { Avatar } from "@/components/avatar";
 import LightPillarBackground from "@/components/lightpilar-backgorund";
 
 export default async function DashboardLayout({
@@ -22,12 +22,11 @@ export default async function DashboardLayout({
   }
 
   const displayName = profile?.display_name || user.email || "Ski friend";
-  const avatarClass = getAvatarClass(profile?.avatar_url);
 
   const rightSlot = (
     <>
       <Link href="/dashboard/profile" className="profile-link">
-        <div className={`avatar ${avatarClass}`} />
+        <Avatar avatarUrl={profile?.avatar_url} size="sm" />
         <div className="hidden sm:flex flex-col">
           <span className="text-xs font-medium">{displayName}</span>
           <span className="text-[10px] text-[var(--color-text-muted)]">

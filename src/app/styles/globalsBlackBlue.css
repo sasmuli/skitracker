@@ -315,6 +315,12 @@ a:hover {
   display: block;
 }
 
+@media (max-width: 67rem) {
+  .mobile-card-nav .card-nav.open .card-nav-content {
+    padding-bottom: calc(0.75rem + var(--sab));
+  }
+}
+
 @media (min-width: 67rem) {
   .mobile-card-nav {
     display: none;

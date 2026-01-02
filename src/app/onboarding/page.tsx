@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser-client";
-import { AVATAR_OPTIONS } from "@/types";
 import { updateProfile } from "@/lib/actions";
+import { AvatarUpload } from "@/components/avatar-upload";
 
 export default function OnboardingPage() {
   const supabase = createSupabaseBrowserClient();
@@ -88,23 +88,10 @@ export default function OnboardingPage() {
 
         <div className="space-y-2">
           <label className="label">Choose an avatar</label>
-          <div className="flex flex-wrap gap-3">
-            {AVATAR_OPTIONS.map((option) => (
-              <button
-                key={option.id}
-                type="button"
-                onClick={() => setAvatar(option.id)}
-                className={`avatar-option ${
-                  avatar === option.id ? "avatar-option-selected" : ""
-                }`}
-              >
-                <div className={`avatar avatar-lg ${option.class}`} />
-                <span className="text-[10px] text-slate-400">
-                  {option.label}
-                </span>
-              </button>
-            ))}
-          </div>
+          <AvatarUpload
+            currentAvatar={avatar}
+            onAvatarChange={setAvatar}
+          />
         </div>
 
         <button

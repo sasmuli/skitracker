@@ -26,3 +26,9 @@ export function getAvatarClass(avatarKey: string | null | undefined): string {
   const option = AVATAR_OPTIONS.find((o) => o.id === avatarKey);
   return option?.class || 'avatar-blue';
 }
+
+// Check if avatar_url is a custom uploaded image (URL) vs a color ID
+export function isCustomAvatarUrl(avatarUrl: string | null | undefined): boolean {
+  if (!avatarUrl) return false;
+  return avatarUrl.startsWith('http://') || avatarUrl.startsWith('https://');
+}
