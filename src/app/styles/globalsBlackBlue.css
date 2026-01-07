@@ -245,7 +245,7 @@ a:hover {
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: 15px;
+  border-radius: 16px;
   padding: 1px;
   background: linear-gradient(135deg, var(--glass-border), transparent 50%);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -407,13 +407,28 @@ a:hover {
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
 
-  border: 1px solid rgba(255, 255, 255, 0.07);
+
+  /*TODO decide if we want to add or remove border*/
+  /* border: 0.25px solid rgba(255, 255, 255, 0.07); */
   border-radius: 16px;
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05) inset, var(--shadow-md);
+
 
   outline: none;
   transition: all 0.3s ease;
 }
+
+.input[type="number"]::-webkit-outer-spin-button,
+.input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
 
 .input::placeholder {
   color: var(--color-text-subtle);
@@ -461,6 +476,7 @@ select:autofill {
   background-color: rgba(0, 0, 0, 0.01) !important;
   box-shadow: 0 0 0px 1000px rgba(0, 0, 0, 0.01) inset !important;
 }
+
 
 /* ─────────────── Buttons (Blue accent from globals.css) ─────────────── */
 
@@ -572,6 +588,10 @@ select:autofill {
   box-shadow: var(--shadow-sm);
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+.btn-secondary:hover {
+  color: var(--accent);
 }
 
 .btn-secondary:hover:not(:disabled) {
@@ -1325,8 +1345,7 @@ select:autofill {
 }
 
 .ski-info-trigger:hover {
-  color: var(--color-text);
-  border-color: rgba(255, 255, 255, 0.35);
+  color: var(--accent);
 }
 
 .ski-info-overlay {
@@ -1386,8 +1405,8 @@ select:autofill {
 }
 
 .ski-info-close:hover {
-  color: var(--color-text);
-  background: rgba(255, 255, 255, 0.05);
+  color: var(--accent);
+
 }
 
 .ski-info-content {

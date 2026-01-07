@@ -32,6 +32,7 @@ const AnimatedItem: React.FC<AnimatedItemProps> = ({ children, delay = 0, index,
 
 interface AnimatedListProps {
   items?: string[];
+  visibleItems?: number;
   onItemSelect?: (item: string, index: number) => void;
   showGradients?: boolean;
   enableArrowNavigation?: boolean;
@@ -42,23 +43,7 @@ interface AnimatedListProps {
 }
 
 const AnimatedList: React.FC<AnimatedListProps> = ({
-  items = [
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 4',
-    'Item 5',
-    'Item 6',
-    'Item 7',
-    'Item 8',
-    'Item 9',
-    'Item 10',
-    'Item 11',
-    'Item 12',
-    'Item 13',
-    'Item 14',
-    'Item 15'
-  ],
+  items = [],
   onItemSelect,
   showGradients = true,
   enableArrowNavigation = true,
@@ -145,7 +130,7 @@ const AnimatedList: React.FC<AnimatedListProps> = ({
     <div className={`relative w-full ${className}`}>
       <div
         ref={listRef}
-        className={`max-h-[400px] overflow-y-auto p-2 ${
+        className={`max-h-[460px] overflow-y-auto p-2 ${
           displayScrollbar
             ? '[&::-webkit-scrollbar]:w-[8px] [&::-webkit-scrollbar-track]:bg-[rgba(0,0,0,0.25)] [&::-webkit-scrollbar-thumb]:bg-[rgba(255,255,255,0.14)] [&::-webkit-scrollbar-thumb]:rounded-[4px]'
             : 'scrollbar-hide'
