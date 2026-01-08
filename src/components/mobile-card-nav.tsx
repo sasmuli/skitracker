@@ -31,9 +31,10 @@ const NAV_ITEMS_PUBLIC: CardNavItem[] = [
 type MobileCardNavProps = {
   rightSlot?: ReactNode;
   isAuthenticated?: boolean;
+  isUserAdmin?: boolean;
 };
 
-export function MobileCardNav({ rightSlot, isAuthenticated = false }: MobileCardNavProps) {
+export function MobileCardNav({ rightSlot, isAuthenticated = false, isUserAdmin = false }: MobileCardNavProps) {
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
 
@@ -51,6 +52,7 @@ export function MobileCardNav({ rightSlot, isAuthenticated = false }: MobileCard
       links: [
         { label: "Home", href: "/", ariaLabel: "Go to Home" },
         { label: "Dashboard", href: "/dashboard", ariaLabel: "Go to Dashboard" },
+        ...(isUserAdmin ? [{ label: "Admin", href: "/adminDashboard", ariaLabel: "Go to Admin Dashboard" }] : []),
       ]
     },
     {

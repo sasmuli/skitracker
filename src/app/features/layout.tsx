@@ -53,8 +53,8 @@ export default async function FeaturesLayout({
   return (
     <div className="page-container">
       <FloatingLinesBackground />
-      <MobileCardNav isAuthenticated={!!user} />
-      <Header rightSlot={headerRightSlot} isAuthenticated={!!user} />
+      <MobileCardNav isAuthenticated={!!user} isUserAdmin={profile?.admin || false} />
+      <Header rightSlot={headerRightSlot} isAuthenticated={!!user} isUserAdmin={profile?.admin || false} />
       <main className="page-content">{children}</main>
     </div>
   );
