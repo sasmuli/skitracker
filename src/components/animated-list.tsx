@@ -40,6 +40,7 @@ interface AnimatedListProps {
   itemClassName?: string;
   displayScrollbar?: boolean;
   initialSelectedIndex?: number;
+  renderItem?: (item: string, index: number) => ReactNode;
 }
 
 const AnimatedList: React.FC<AnimatedListProps> = ({
@@ -50,7 +51,8 @@ const AnimatedList: React.FC<AnimatedListProps> = ({
   className = '',
   itemClassName = '',
   displayScrollbar = true,
-  initialSelectedIndex = -1
+  initialSelectedIndex = -1,
+  renderItem
 }) => {
   const listRef = useRef<HTMLDivElement>(null);
   const [selectedIndex, setSelectedIndex] = useState<number>(initialSelectedIndex);
@@ -149,9 +151,13 @@ const AnimatedList: React.FC<AnimatedListProps> = ({
             onMouseEnter={() => handleItemMouseEnter(index)}
             onClick={() => handleItemClick(item, index)}
           >
-            <div className={`animated-list-item p-4 ${itemClassName}`}>
-              <p className="text-[var(--foreground)] m-0">{item}</p>
-            </div>
+            {renderItem ? (
+              renderItem(item, index)
+            ) : (
+              <div className={`animated-list-item p-4 ${itemClassName}`}>
+                <p className="text-[var(--foreground)] m-0">{item}</p>
+              </div>
+            )}
           </AnimatedItem>
         ))}
       </div>

@@ -2,6 +2,7 @@
 
 import { createSupabaseServerClient } from "@/lib/supabase/server-client";
 import type { ResortInput } from "@/types";
+import { revalidatePath } from "next/cache";
 
 export async function createResort(input: ResortInput) {
   const supabase = await createSupabaseServerClient();
@@ -32,5 +33,56 @@ export async function createResort(input: ResortInput) {
     return { error: error.message };
   }
 
+  return { success: true };
+}
+
+export async function approveResort(resortId: string) {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
+
+  const { error } = await supabase
+    .from("resorts")
+    .update({ approved: true })
+    .eq("id", resortId);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath("/adminDashboard");
+  revalidatePath("/info");
+  revalidatePath("/dashboard/add-day");
+  
+  return { success: true };
+}
+
+//TODO: Make delete from database
+export async function declineResort(resortId: string) {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
+
+  const { error } = await supabase
+    .from("resorts")
+    .delete()
+    .eq("id", resortId);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath("/adminDashboard");
+  
   return { success: true };
 }
