@@ -356,6 +356,19 @@ a:hover {
   }
 }
 
+/* More stats grid - single column on mobile, 2 cols on desktop */
+.more-stats-grid {
+  grid-template-columns: 1fr;
+  padding-bottom: 2rem;
+}
+
+@media (min-width: 48.125rem) {
+  .more-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    padding-bottom: 0;
+  }
+}
+
 /* Profile section header line */
 .profile-section-header {
   display: flex;

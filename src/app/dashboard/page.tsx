@@ -10,6 +10,8 @@ import {
   getCurrentUserWithProfile,
   getResorts,
 } from "@/lib/queries";
+import { MoreStatsCard1 } from "@/components/more-stats-card-1";
+import { MoreStatsCard2 } from "@/components/more-stats-card-2";
 
 //TODO Look if this can be used anywhere https://reactbits.dev/components/magic-bento
 
@@ -59,7 +61,10 @@ export default async function DashboardPage() {
         avgRating={stats.avgRating}
         uniqueResorts={stats.uniqueResorts}
       />
-
+      <div className="more-stats-grid grid gap-4">
+        <MoreStatsCard1 />
+        <MoreStatsCard2 />
+      </div>
       {/* Mobile fixed button at bottom */}
       <Link
         href="/dashboard/add-day"
