@@ -9,6 +9,7 @@ import { SnowflakeRating } from "@/components/snowflake-rating";
 import { MultiDatePicker } from "@/components/multi-date-picker";
 import { CustomSelect } from "@/components/custom-select";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { getResorts } from "@/lib/queries/resorts";
 
 type DayFormData = {
   resortId: string;
@@ -58,21 +59,14 @@ export default function AddSkiDayPage() {
 
   // Load resorts from Supabase
   useEffect(() => {
-    async function loadResorts() {
-      setLoadingResorts(true);
-      const { data, error } = await supabase
-        .from("resorts")
-        .select("id, name")
-        .order("name", { ascending: true });
-
-      if (!error && data) {
-        setResorts(data);
-      }
-      setLoadingResorts(false);
-    }
-
-    loadResorts();
-  }, [supabase]);
+  async function loadResorts() {
+    setLoadingResorts(true);
+    const data = await getResorts(supabase);
+    setResorts(data.map(r => ({ id: r.id, name: r.name })));
+    setLoadingResorts(false);
+  }
+  loadResorts();
+}, [supabase]);
 
   // Initialize form data when dates change
   useEffect(() => {

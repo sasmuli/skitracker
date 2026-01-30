@@ -9,7 +9,7 @@ import { MobileCardNav } from "@/components/mobile-card-nav";
 import { Avatar } from "@/components/avatar";
 import LightPillarBackground from "@/components/lightpilar-backgorund";
 
-export default async function DashboardLayout({
+export default async function AdminDashboardLayout({
   children,
 }: {
   children: ReactNode;
@@ -21,7 +21,12 @@ export default async function DashboardLayout({
     redirect("/login");
   }
 
-  const displayName = profile?.display_name || user.email || "Ski friend";
+  // Only allow admin users
+  if (!profile?.admin) {
+    redirect("/dashboard");
+  }
+
+  const displayName = profile?.display_name || user.email || "Admin";
 
   const rightSlot = (
     <>
@@ -40,10 +45,9 @@ export default async function DashboardLayout({
 
   return (
     <div className="page-container">
-      {/* TODO Maybe change light pillar to plasma */}
       <LightPillarBackground />
-      <MobileCardNav rightSlot={rightSlot} isAuthenticated={true} isUserAdmin={profile?.admin || false} />
-      <Header rightSlot={rightSlot} isAuthenticated={true} isUserAdmin={profile?.admin || false} />
+      <MobileCardNav rightSlot={rightSlot} isAuthenticated={true} isUserAdmin={true} />
+      <Header rightSlot={rightSlot} isAuthenticated={true} isUserAdmin={true} />
       <main className="page-content">{children}</main>
     </div>
   );

@@ -5,9 +5,10 @@ import Image from 'next/image';
 type HeaderProps = {
   rightSlot?: ReactNode;
   isAuthenticated?: boolean;
+  isUserAdmin?: boolean;
 };
 
-export function Header({ rightSlot, isAuthenticated = false }: HeaderProps) {
+export function Header({ rightSlot, isAuthenticated = false, isUserAdmin = false }: HeaderProps) {
   return (
     <header className="glass-header px-4 h-16 flex items-center justify-between gap-4 relative">
       {/* Left: main nav (desktop) */}
@@ -36,6 +37,11 @@ export function Header({ rightSlot, isAuthenticated = false }: HeaderProps) {
               Profile
             </Link>
           </>
+        )}
+        {isAuthenticated && (isUserAdmin) && (
+          <Link href="/adminDashboard" className="hover:text-white">
+            Admin
+          </Link>
         )}
       </nav>
 

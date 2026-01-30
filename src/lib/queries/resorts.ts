@@ -4,11 +4,27 @@ import type { Resort } from '@/types';
 export async function getResorts(supabase: SupabaseClient): Promise<Resort[]> {
   const { data, error } = await supabase
     .from('resorts')
-    .select('id, name, height_m, lifts, skislopes_km, location')
+    .select('id, name, height_m, lifts, skislopes_km, location_area, location_city, location_country')
+    .eq('approved', true)
     .order('name');
 
   if (error) {
     console.error('Error fetching resorts:', error);
+    return [];
+  }
+
+  return data ?? [];
+}
+
+export async function getUnapprovedResorts(supabase: SupabaseClient): Promise<Resort[]> {
+  const { data, error } = await supabase
+    .from('resorts')
+    .select('id, name, height_m, lifts, skislopes_km, location_area, location_city, location_country')
+    .eq('approved', false)
+    .order('id', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching unapproved resorts:', error);
     return [];
   }
 

@@ -9,7 +9,7 @@ import { MobileCardNav } from "@/components/mobile-card-nav";
 import { Avatar } from "@/components/avatar";
 import LightPillarBackground from "@/components/lightpilar-backgorund";
 
-export default async function DashboardLayout({
+export default async function StatsLayout({
   children,
 }: {
   children: ReactNode;
