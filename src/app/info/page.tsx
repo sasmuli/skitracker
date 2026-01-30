@@ -1,16 +1,39 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import AnimatedList from "@/components/animated-list";
-import { createSupabaseServerClient } from "@/lib/supabase/server-client";
+import { ResortInfoDialog } from "@/components/resort-info-dialog";
+import { createSupabaseBrowserClient } from "@/lib/supabase/browser-client";
 import { getResorts } from "@/lib/queries/resorts";
 import { getCurrentUserWithProfile } from "@/lib/queries";
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import type { Resort } from "@/types";
 
-export default async function InfoPage() {
-  const supabase = await createSupabaseServerClient();
-  const [{ user }, resorts] = await Promise.all([
-    getCurrentUserWithProfile(supabase),
-    getResorts(supabase),
-  ]);
+export default function InfoPage() {
+  const [resorts, setResorts] = useState<Resort[]>([]);
+  const [user, setUser] = useState<any>(null);
+  const [selectedResort, setSelectedResort] = useState<Resort | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  useEffect(() => {
+    async function fetchData() {
+      const supabase = createSupabaseBrowserClient();
+      const [{ user: authUser }, resortsData] = await Promise.all([
+        getCurrentUserWithProfile(supabase),
+        getResorts(supabase),
+      ]);
+      setUser(authUser);
+      setResorts(resortsData);
+    }
+    fetchData();
+  }, []);
+
+  const handleResortClick = (item: string, index: number) => {
+    setSelectedResort(resorts[index]);
+    setIsDialogOpen(true);
+  };
+
   const items = resorts.map((r) => r.name);
 
   return (
@@ -41,6 +64,9 @@ export default async function InfoPage() {
               Browse all available resorts. Sign in to add missing ones.
             </p>
           )}
+          <p className="mt-1 text-xs text-[var(--accent)]">
+            Press resort to see info
+          </p>
         </div>
 
         {user && (
@@ -56,6 +82,13 @@ export default async function InfoPage() {
         showGradients={false}
         enableArrowNavigation
         displayScrollbar
+        onItemSelect={handleResortClick}
+      />
+
+      <ResortInfoDialog
+        resort={selectedResort}
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
       />
     </section>
     </div>

@@ -62,7 +62,6 @@ export async function approveResort(resortId: string) {
   return { success: true };
 }
 
-//TODO: Make delete from database
 export async function declineResort(resortId: string) {
   const supabase = await createSupabaseServerClient();
   const {
