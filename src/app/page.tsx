@@ -7,6 +7,7 @@ import { MobileCardNav } from "@/components/mobile-card-nav";
 import { Avatar } from "@/components/avatar";
 import { LogIn, UserPlus } from "lucide-react";
 import { FloatingLinesBackground } from "@/components/floatinglines-backgorund";
+import { NotificationDropdown } from "@/components/notification-dropdown";
 
 export default async function HomePage() {
   const supabase = await createSupabaseServerClient();
@@ -33,6 +34,7 @@ export default async function HomePage() {
 
     headerRightSlot = (
       <>
+        <NotificationDropdown />
         <Link href="/dashboard/profile" className="profile-link">
           <Avatar avatarUrl={profile?.avatar_url} size="sm" />
           <div className="hidden sm:flex flex-col">
@@ -50,8 +52,8 @@ export default async function HomePage() {
   return (
     <div>
       <FloatingLinesBackground />
-      <MobileCardNav isAuthenticated={!!user} />
-      <Header rightSlot={headerRightSlot} isAuthenticated={!!user} />
+      <MobileCardNav isAuthenticated={!!user} isUserAdmin={profile?.admin || false} />
+      <Header rightSlot={headerRightSlot} isAuthenticated={!!user} isUserAdmin={profile?.admin || false} />
 
       <main className="flex flex-col items-center py-10 pt-[calc(var(--sat)+56px+2.5rem)]">
         <h1 className="text-3xl font-bold mb-4">Welcome to Ski Tracker</h1>

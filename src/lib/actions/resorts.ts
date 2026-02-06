@@ -62,7 +62,7 @@ export async function approveResort(resortId: string) {
   return { success: true };
 }
 
-export async function declineResort(resortId: string) {
+export async function declineResort(resortId: string, message: string) {
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
@@ -71,6 +71,27 @@ export async function declineResort(resortId: string) {
   if (!user) {
     return { error: "Not authenticated" };
   }
+
+  // Get resort details and submitter before deleting
+  const { data: resort, error: fetchError } = await supabase
+    .from("resorts")
+    .select("name, created_by")
+    .eq("id", resortId)
+    .single();
+
+  if (fetchError || !resort) {
+    return { error: "Resort not found" };
+  }
+
+  // TODO: Create notification for the user who submitted the resort
+  // This will be implemented once the notifications table is created
+  // await createNotification({
+  //   user_id: resort.created_by,
+  //   type: 'resort_declined',
+  //   title: 'Resort Declined',
+  //   message: `Your resort "${resort.name}" was declined. Reason: ${message}`,
+  //   resort_id: resortId
+  // });
 
   const { error } = await supabase
     .from("resorts")
