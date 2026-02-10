@@ -8,12 +8,15 @@ import { approveResort, declineResort } from "@/lib/actions/resorts";
 import type { Resort } from "@/types";
 import { Check, X, Loader2 } from "lucide-react";
 import { Snackbar, type SnackbarType } from "@/components/snackbar";
+import { DeclineDialog } from "@/components/decline-dialog";
 
 export default function AdminDashboard() {
   const [unapprovedResorts, setUnapprovedResorts] = useState<Resort[]>([]);
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [snackbar, setSnackbar] = useState<{ type: SnackbarType; message: string } | null>(null);
+  const [declineDialogOpen, setDeclineDialogOpen] = useState(false);
+  const [selectedResort, setSelectedResort] = useState<Resort | null>(null);
 
   useEffect(() => {
     async function fetchResorts() {
@@ -45,13 +48,22 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleDecline = async (resortId: string) => {
-    setProcessingId(resortId);
+  const openDeclineDialog = (resort: Resort) => {
+    setSelectedResort(resort);
+    setDeclineDialogOpen(true);
+  };
+
+  const handleDeclineConfirm = async (message: string) => {
+    if (!selectedResort) return;
+    
+    setDeclineDialogOpen(false);
+    setProcessingId(selectedResort.id);
+    
     try {
-      const result = await declineResort(resortId);
+      const result = await declineResort(selectedResort.id, message);
       if (result.success) {
-        setUnapprovedResorts(prev => prev.filter(r => r.id !== resortId));
-        setSnackbar({ type: "success", message: "Resort declined successfully!" });
+        setUnapprovedResorts(prev => prev.filter(r => r.id !== selectedResort.id));
+        setSnackbar({ type: "success", message: "Resort declined and notification sent!" });
         setTimeout(() => setSnackbar(null), 3000);
       } else {
         setSnackbar({ type: "error", message: result.error || "Failed to decline resort" });
@@ -62,6 +74,7 @@ export default function AdminDashboard() {
       setTimeout(() => setSnackbar(null), 3000);
     } finally {
       setProcessingId(null);
+      setSelectedResort(null);
     }
   };
 
@@ -156,7 +169,7 @@ export default function AdminDashboard() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleDecline(resort.id);
+                            openDeclineDialog(resort);
                           }}
                           className="btn btn-secondary"
                           title="Decline"
@@ -178,6 +191,16 @@ export default function AdminDashboard() {
           )}
         </section>
       </div>
+
+      <DeclineDialog
+        resortName={selectedResort?.name || ""}
+        isOpen={declineDialogOpen}
+        onConfirm={handleDeclineConfirm}
+        onCancel={() => {
+          setDeclineDialogOpen(false);
+          setSelectedResort(null);
+        }}
+      />
     </>
   );
 }

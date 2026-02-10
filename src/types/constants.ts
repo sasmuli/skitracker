@@ -1,10 +1,10 @@
 // Ski Types
 export const SKI_TYPES = [
-  { id: 'piste', label: 'Piste' },
-  { id: 'park', label: 'Park' },
-  { id: 'freeride', label: 'Freeride' },
-  { id: 'touring', label: 'Touring' },
-  { id: 'street', label: 'Street' },
+  { id: 'piste', label: 'Piste', color: '#22c55e' },
+  { id: 'park', label: 'Park', color: '#ef4444' },
+  { id: 'freeride', label: 'Freeride', color: '#f97316' },
+  { id: 'touring', label: 'Touring', color: '#a855f7' },
+  { id: 'street', label: 'Street', color: '#06b6d4' },
 ] as const;
 
 export type SkiType = (typeof SKI_TYPES)[number]['id'];

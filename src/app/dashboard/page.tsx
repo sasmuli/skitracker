@@ -62,8 +62,8 @@ export default async function DashboardPage() {
         uniqueResorts={stats.uniqueResorts}
       />
       <div className="more-stats-grid grid gap-4">
-        <MoreStatsCard1 />
-        <MoreStatsCard2 />
+        <MoreStatsCard1 skiDays={skiDays || []} />
+        <MoreStatsCard2 skiDays={skiDays || []} />
       </div>
       {/* Mobile fixed button at bottom */}
       <Link

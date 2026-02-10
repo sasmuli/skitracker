@@ -145,3 +145,8 @@ Use these as:
 - “Did you know?” facts
 - Achievement badges
 - Progress indicators toward big goals (Earth, Moon, countries, marathons)
+
+
+1 maybe like days skied out x and this is not a chart more like a line thing or i dont know 
+
+and there would be options to change like days out of the current month, current year last 365 days, week and from set date to set date

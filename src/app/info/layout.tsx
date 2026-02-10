@@ -7,6 +7,7 @@ import { getCurrentUserWithProfile } from "@/lib/queries";
 import { LogoutButton } from "@/components/logout-button";
 import { Avatar } from "@/components/avatar";
 import { LogIn, UserPlus } from "lucide-react";
+import { NotificationDropdown } from "@/components/notification-dropdown";
 
 export default async function InfoLayout({
   children,
@@ -36,6 +37,7 @@ export default async function InfoLayout({
 
     headerRightSlot = (
       <>
+        <NotificationDropdown />
         <Link href="/dashboard/profile" className="profile-link">
           <Avatar avatarUrl={profile?.avatar_url} size="sm" />
           <div className="hidden sm:flex flex-col">

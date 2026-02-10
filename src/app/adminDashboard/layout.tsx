@@ -8,6 +8,7 @@ import { Header } from "@/components/header";
 import { MobileCardNav } from "@/components/mobile-card-nav";
 import { Avatar } from "@/components/avatar";
 import LightPillarBackground from "@/components/lightpilar-backgorund";
+import { NotificationDropdown } from "@/components/notification-dropdown";
 
 export default async function AdminDashboardLayout({
   children,
@@ -30,6 +31,7 @@ export default async function AdminDashboardLayout({
 
   const rightSlot = (
     <>
+      <NotificationDropdown />
       <Link href="/dashboard/profile" className="profile-link">
         <Avatar avatarUrl={profile?.avatar_url} size="sm" />
         <div className="hidden sm:flex flex-col">
