@@ -1,3 +1,5 @@
+https://skitracker.vercel.app/
+
 # Ski Tracker
 
 This is a **personal side project** for tracking ski days for myself, family and friends.
