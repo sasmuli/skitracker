@@ -8,6 +8,7 @@
 
 /* THEME INLINE (Tailwind v4) */
 @theme inline {
+  --breakpoint-2xs: 25rem; /* 320px */
   --breakpoint-xs: 30rem; /* 480px */
   --breakpoint-sm: 40rem; /* 640px */
   --breakpoint-md: 48rem; /* 768px */
@@ -355,6 +356,7 @@ a:hover {
     padding-bottom: 0;
   }
 }
+
 
 /* More stats grid - single column on mobile, 2 cols on desktop */
 .more-stats-grid {
