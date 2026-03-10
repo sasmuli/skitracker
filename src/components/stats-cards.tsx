@@ -13,6 +13,8 @@ type StatsCardsProps = {
 
 export function StatsCards({ totalDays, totalHours, totalDistance, avgRating, uniqueResorts }: StatsCardsProps) {
   const avgRatingRounded = avgRating != null ? Math.round(avgRating * 10) / 10 : null;
+  const totalHoursRounded = Math.round(totalHours * 10) / 10;
+  const totalDistanceRounded = Math.round(totalDistance * 10) / 10;
   
   const [dataKey, setDataKey] = useState(0);
   const [daysKey, setDaysKey] = useState(0);
@@ -42,7 +44,7 @@ export function StatsCards({ totalDays, totalHours, totalDistance, avgRating, un
         onClick={() => setHoursKey(prev => prev + 1)}
       >
         <p className="text-2xl font-bold text-sky-400">
-          <CountUp key={`hours-${dataKey}-${hoursKey}`} to={totalHours} duration={1.5} />
+          <CountUp key={`hours-${dataKey}-${hoursKey}`} to={totalHoursRounded} duration={1.5} />
         </p>
         <p className="text-xs text-slate-400">Total Hours</p>
       </div>
@@ -52,7 +54,7 @@ export function StatsCards({ totalDays, totalHours, totalDistance, avgRating, un
         onClick={() => setDistanceKey(prev => prev + 1)}
       >
         <p className="text-2xl font-bold text-sky-400">
-          <CountUp key={`distance-${dataKey}-${distanceKey}`} to={totalDistance} duration={1.5} />
+          <CountUp key={`distance-${dataKey}-${distanceKey}`} to={totalDistanceRounded} duration={1.5} />
         </p>
         <p className="text-xs text-slate-400">Total Distance</p>
       </div>

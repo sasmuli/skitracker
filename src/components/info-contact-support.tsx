@@ -1,20 +1,32 @@
+"use client";
+
 import { Mail, MessageSquare, Github, Linkedin } from "lucide-react";
+import { useState } from "react";
+import { ContactFormModal } from "./contact-form-modal";
 
 export function InfoContactSupport() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+
+  const handleOpenModal = (title: string) => {
+    setModalTitle(title);
+    setIsModalOpen(true);
+  };
+
   const contactItems = [
     {
       icon: MessageSquare,
       title: "Report a Bug",
       description: "Found an issue? Let us know so we can fix it.",
       action: "Report Bug",
-      href: "mailto:support@skitracker.com?subject=Bug Report",
+      type: "modal" as const,
     },
     {
       icon: Mail,
       title: "Feature Request",
       description: "Have an idea? We'd love to hear your suggestions.",
       action: "Request Feature",
-      href: "mailto:support@skitracker.com?subject=Feature Request",
+      type: "modal" as const,
     },
     {
       icon: Github,
@@ -58,29 +70,38 @@ export function InfoContactSupport() {
                   <p className="text-xs text-[var(--color-text-muted)] mb-3">
                     {item.description}
                   </p>
-                  <a
-                    href={item.href}
-                    className="text-xs text-[var(--accent)] hover:underline inline-flex items-center gap-1"
-                    target={item.external ? "_blank" : undefined}
-                    rel={item.external ? "noopener noreferrer" : undefined}
-                  >
-                    {item.action}
-                    {item.external && (
-                      <svg
-                        className="w-3 h-3"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                        />
-                      </svg>
-                    )}
-                  </a>
+                  {item.type === "modal" ? (
+                    <button
+                      onClick={() => handleOpenModal(item.title)}
+                      className="text-xs text-[var(--accent)] hover:underline inline-flex items-center gap-1"
+                    >
+                      {item.action}
+                    </button>
+                  ) : (
+                    <a
+                      href={item.href}
+                      className="text-xs text-[var(--accent)] hover:underline inline-flex items-center gap-1"
+                      target={item.external ? "_blank" : undefined}
+                      rel={item.external ? "noopener noreferrer" : undefined}
+                    >
+                      {item.action}
+                      {item.external && (
+                        <svg
+                          className="w-3 h-3"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                          />
+                        </svg>
+                      )}
+                    </a>
+                  )}
                 </div>
               </div>
             </div>
@@ -98,6 +119,12 @@ export function InfoContactSupport() {
           </a>
         </p>
       </div>
+
+      <ContactFormModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={modalTitle}
+      />
     </section>
   );
 }
