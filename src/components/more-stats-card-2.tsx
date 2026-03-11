@@ -30,25 +30,9 @@ export function MoreStatsCard2({ skiDays }: MoreStatsCard2Props) {
 
   // Calculate total hours
   const totalHours = skiDays.reduce((sum, day) => sum + (day.hours || 0), 0);
+  const totalHoursRounded = Math.round(totalHours * 10) / 10;
   const workdays = Math.round((totalHours / 8) * 10) / 10;
 
-  // Render stars for rating
-  const renderStars = (rating: number) => {
-    const stars = [];
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
-    
-    for (let i = 0; i < 5; i++) {
-      if (i < fullStars) {
-        stars.push(<span key={i} className="text-yellow-400 text-xl">★</span>);
-      } else if (i === fullStars && hasHalfStar) {
-        stars.push(<span key={i} className="text-yellow-400 text-xl">★</span>);
-      } else {
-        stars.push(<span key={i} className="text-gray-600 text-xl">★</span>);
-      }
-    }
-    return stars;
-  };
 
   const hasData = distanceData.length > 0 && distanceData[distanceData.length - 1].distance > 0;
 
@@ -140,7 +124,7 @@ export function MoreStatsCard2({ skiDays }: MoreStatsCard2Props) {
           <div className="text-center mb-4">
             <p className="text-xs text-[var(--color-text-muted)] mb-1">Total Hours</p>
             <p className="text-lg font-semibold text-[var(--foreground)]">
-              {totalHours} hrs{" "}
+              {totalHoursRounded} hrs{" "}
               <span className="text-sm text-sky-400">({workdays} workdays)</span>
             </p>
           </div>
