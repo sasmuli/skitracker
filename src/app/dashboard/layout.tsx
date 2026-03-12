@@ -42,7 +42,6 @@ export default async function DashboardLayout({
 
   return (
     <div className="page-container">
-      {/* TODO Maybe change light pillar to plasma */}
       <LightPillarBackground />
       <MobileCardNav rightSlot={rightSlot} isAuthenticated={true} isUserAdmin={profile?.admin || false} />
       <Header rightSlot={rightSlot} isAuthenticated={true} isUserAdmin={profile?.admin || false} />

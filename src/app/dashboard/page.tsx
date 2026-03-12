@@ -13,8 +13,6 @@ import {
 import { MoreStatsCard1 } from "@/components/more-stats-card-1";
 import { MoreStatsCard2 } from "@/components/more-stats-card-2";
 
-//TODO Look if this can be used anywhere https://reactbits.dev/components/magic-bento
-
 export default async function DashboardPage() {
   const supabase = await createSupabaseServerClient();
   const { user, profile } = await getCurrentUserWithProfile(supabase);
