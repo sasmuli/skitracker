@@ -1,7 +1,6 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server-client";
 import { getSkiDays, getCurrentUserWithProfile, getSkiDayStats } from "@/lib/queries";
-import { StatsGrid } from "@/components/stats-grid";
-import PillNav from "@/components/pill-filter-button";
+import { StatsPageWrapper } from "@/components/stats-page-wrapper";
 
 export default async function StatsPage() {
   const supabase = await createSupabaseServerClient();
@@ -125,26 +124,9 @@ export default async function StatsPage() {
   ];
 
   return (
-    
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
-    <div className="max-w-7xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Your Ski Statistics</h1>
-
-      <div className="mb-10 flex justify-center">
-        <PillNav
-          items={[
-            { value: 'all', label: 'All Stats' },
-            { value: 'overview', label: 'Distance' },
-            { value: 'details', label: 'Endurance & Time' },
-            { value: 'charts', label: 'Resort' },
-            { value: 'quality', label: 'Quality' },
-            { value: 'types', label: 'Ski Types' },
-            { value: 'fun', label: 'Fun' }
-          ]}
-        />
-      </div>
-
-        <StatsGrid
+      <div className="max-w-7xl mx-auto">
+        <StatsPageWrapper
           totalDistance={totalDistance}
           totalHours={totalHours}
           totalDays={totalDays}

@@ -35,7 +35,7 @@ const PillNav: React.FC<PillNavProps> = ({
   pillMobileColor = '#ffffff',
   hoveredPillTextColor = 'var(--background)',
   pillTextColor,
-  initialLoadAnimation = true
+  initialLoadAnimation = false
 }) => {
   const resolvedPillTextColor = pillTextColor ?? baseColor;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -207,7 +207,8 @@ const PillNav: React.FC<PillNavProps> = ({
     ['--nav-h']: '42px',
     ['--logo']: '36px',
     ['--pill-pad-x']: '18px',
-    ['--pill-gap']: '3px'
+    ['--pill-gap']: '3px',
+    ['--glass-blur']: '12px'
   } as React.CSSProperties;
 
   return (
@@ -224,7 +225,11 @@ const PillNav: React.FC<PillNavProps> = ({
           className="relative items-center rounded-full hidden md:flex"
           style={{
             height: 'var(--nav-h)',
-            background: 'var(--base, #000)'
+            background: 'var(--base, #000)',
+            backdropFilter: 'blur(var(--glass-blur))',
+            WebkitBackdropFilter: 'blur(var(--glass-blur))',
+            border: '1px solid rgba(255, 255, 255, 0.07)',
+            boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
           }}
         >
           <div
@@ -235,10 +240,13 @@ const PillNav: React.FC<PillNavProps> = ({
               const isActive = activeValue === item.value;
 
               const pillStyle: React.CSSProperties = {
-                background: 'var(--pill-bg, #fff)',
-                color: 'var(--pill-text, var(--base, #000))',
+                background: isActive 
+                  ? 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.8) 65%)'
+                  : 'var(--pill-bg, #fff)',
+                color: isActive ? 'var(--accent)' : 'var(--pill-text, var(--base, #000))',
                 paddingLeft: 'var(--pill-pad-x)',
-                paddingRight: 'var(--pill-pad-x)'
+                paddingRight: 'var(--pill-pad-x)',
+                border: isActive ? '1px solid rgba(255, 255, 255, 0.15)' : 'none'
               };
 
               const PillContent = (
@@ -313,11 +321,11 @@ const PillNav: React.FC<PillNavProps> = ({
         >
           <span
             className="hamburger-line w-7 h-0.5 rounded origin-center transition-all duration-[10ms] ease-[cubic-bezier(0.25,0.1,0.25,1)]"
-            style={{ background: 'var(--pill-mobile-bg, #ffffff)' }}
+            style={{ background: '#ffffff' }}
           />
           <span
             className="hamburger-line w-7 h-0.5 rounded origin-center transition-all duration-[10ms] ease-[cubic-bezier(0.25,0.1,0.25,1)]"
-            style={{ background: 'var(--pill-mobile-bg, #ffffff)' }}
+            style={{ background: '#ffffff' }}
           />
         </button>
       </div>
@@ -327,23 +335,33 @@ const PillNav: React.FC<PillNavProps> = ({
         className="md:hidden absolute top-[3em] left-4 right-4 rounded-[27px] shadow-[0_8px_32px_rgba(0,0,0,0.12)] z-[998] origin-top"
         style={{
           ...cssVars,
-          background: 'var(--base, #f0f0f0)'
+          background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
+          backdropFilter: 'blur(var(--glass-blur))',
+          WebkitBackdropFilter: 'blur(var(--glass-blur))',
+          border: '1px solid rgba(255, 255, 255, 0.07)'
         }}
       >
         <div className="m-0 p-[3px] flex flex-col gap-[3px]">
           {items.map((item) => {
             const isActive = activeValue === item.value;
             const defaultStyle: React.CSSProperties = {
-              background: 'var(--pill-bg, #fff)',
-              color: 'var(--pill-text, #fff)'
+              background: isActive 
+                ? 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.8) 65%)'
+                : 'rgba(20, 20, 25, 0.5)',
+              color: '#ffffff',
+              border: isActive ? '1px solid rgba(255, 255, 255, 0.15)' : '1px solid rgba(255, 255, 255, 0.05)'
             };
             const hoverIn = (e: React.MouseEvent<HTMLButtonElement>) => {
-              e.currentTarget.style.background = 'var(--base)';
-              e.currentTarget.style.color = 'var(--hover-text, #fff)';
+              if (!isActive) {
+                e.currentTarget.style.background = 'rgba(39, 39, 39, 0.7)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+              }
             };
             const hoverOut = (e: React.MouseEvent<HTMLButtonElement>) => {
-              e.currentTarget.style.background = 'var(--pill-bg, #fff)';
-              e.currentTarget.style.color = 'var(--pill-text, #fff)';
+              if (!isActive) {
+                e.currentTarget.style.background = 'rgba(20, 20, 25, 0.5)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.05)';
+              }
             };
 
             const buttonClasses =
@@ -361,6 +379,14 @@ const PillNav: React.FC<PillNavProps> = ({
                 onClick={() => {
                   onFilterChange?.(item.value);
                   setIsMobileMenuOpen(false);
+                  
+                  // Reset hamburger icon animation
+                  const hamburger = hamburgerRef.current;
+                  if (hamburger) {
+                    const lines = hamburger.querySelectorAll('.hamburger-line');
+                    gsap.to(lines[0], { rotation: 0, y: 0, duration: 0.3, ease });
+                    gsap.to(lines[1], { rotation: 0, y: 0, duration: 0.3, ease });
+                  }
                 }}
               >
                 {item.label}

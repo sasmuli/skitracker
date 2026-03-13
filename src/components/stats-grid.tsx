@@ -3,6 +3,8 @@
 import { StatPageCard } from "@/components/stat-page-card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
+export type FilterCategory = 'all' | 'distance' | 'endurance' | 'resort' | 'quality' | 'types' | 'fun';
+
 interface StatsGridProps {
   totalDistance: number;
   totalHours: number;
@@ -34,6 +36,7 @@ interface StatsGridProps {
   ratingConsistency: string;
   skiTypeDistribution: Array<{ type: string; percentage: string }>;
   versatility: string;
+  activeFilter?: FilterCategory;
 }
 
 export function StatsGrid(props: StatsGridProps) {
@@ -65,7 +68,8 @@ export function StatsGrid(props: StatsGridProps) {
     favoriteResortShare,
     ratingConsistency,
     skiTypeDistribution,
-    versatility
+    versatility,
+    activeFilter = 'all'
   } = props;
 
   // Chart data
@@ -102,10 +106,16 @@ export function StatsGrid(props: StatsGridProps) {
     ? skiTypeDistribution.map(t => `${t.percentage}% ${t.type}`).join(', ')
     : 'No ski type data';
 
+  // Filter helper function
+  const shouldShowSection = (category: FilterCategory) => {
+    return activeFilter === 'all' || activeFilter === category;
+  };
+
   return (
     <div className="space-y-12">
       
       {/* DISTANCE SECTION */}
+      {shouldShowSection('distance') && (
       <div>
         <h2 className="text-3xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
           🌍 Distance
@@ -616,8 +626,10 @@ export function StatsGrid(props: StatsGridProps) {
 
         </div>
       </div>
+      )}
 
       {/* ENDURANCE & TIME SECTION */}
+      {shouldShowSection('endurance') && (
       <div>
         <h2 className="text-3xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
           ⏱️ Endurance & Time
@@ -785,8 +797,10 @@ export function StatsGrid(props: StatsGridProps) {
 
         </div>
       </div>
+      )}
 
       {/* RESORT EXPLORATION SECTION */}
+      {shouldShowSection('resort') && (
       <div>
         <h2 className="text-3xl font-bold mb-6 bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
           🏔️ Resort Exploration
@@ -995,8 +1009,10 @@ export function StatsGrid(props: StatsGridProps) {
 
         </div>
       </div>
+      )}
 
       {/* QUALITY AND PERFORMANCE SECTION */}
+      {shouldShowSection('quality') && (
       <div>
         <h2 className="text-3xl font-bold mb-6 bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
           ⭐ Quality and Performance
@@ -1106,8 +1122,10 @@ export function StatsGrid(props: StatsGridProps) {
 
         </div>
       </div>
+      )}
 
       {/* SKI TYPE SECTION */}
+      {shouldShowSection('types') && (
       <div>
         <h2 className="text-3xl font-bold mb-6 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
           🎿 Ski Type
@@ -1190,8 +1208,10 @@ export function StatsGrid(props: StatsGridProps) {
 
         </div>
       </div>
+      )}
 
       {/* FUN SECTION */}
+      {shouldShowSection('fun') && (
       <div>
         <h2 className="text-3xl font-bold mb-6 bg-gradient-to-r from-pink-400 to-rose-400 bg-clip-text text-transparent">
           🔥 Fun
@@ -1342,6 +1362,7 @@ export function StatsGrid(props: StatsGridProps) {
 
         </div>
       </div>
+      )}
 
     </div>
   );
