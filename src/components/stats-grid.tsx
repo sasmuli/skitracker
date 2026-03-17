@@ -1,7 +1,7 @@
 "use client";
 
 import { StatPageCard } from "@/components/stat-page-card";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, RadialBarChart, RadialBar, Legend } from 'recharts';
 
 export type FilterCategory = 'all' | 'distance' | 'endurance' | 'resort' | 'quality' | 'types' | 'fun';
 
@@ -42,6 +42,7 @@ interface StatsGridProps {
 export function StatsGrid(props: StatsGridProps) {
   const {
     totalDistance,
+    totalDays,
     earthPercent,
     finlandTimes,
     helsinkiRovaniemiTimes,
@@ -106,6 +107,15 @@ export function StatsGrid(props: StatsGridProps) {
     ? skiTypeDistribution.map(t => `${t.percentage}% ${t.type}`).join(', ')
     : 'No ski type data';
 
+  const everestHeight = 8.848;
+  const everestClimbsDecimal = totalDistance / everestHeight;
+  
+  const finlandLength = 1160;
+  const finlandTimesDecimal = totalDistance / finlandLength;
+  
+  const helsinkiRovaniemiDistance = 830;
+  const helsinkiRovaniemiTimesDecimal = totalDistance / helsinkiRovaniemiDistance;
+
   // Filter helper function
   const shouldShowSection = (category: FilterCategory) => {
     return activeFilter === 'all' || activeFilter === category;
@@ -127,7 +137,7 @@ export function StatsGrid(props: StatsGridProps) {
         category="Distance"
         title="Around the Earth"
         value={`${earthPercent}%`}
-        description={`You've skied ${totalDistance} km — that's ${earthPercent}% around the Earth 🌍`}
+        description={`You've skied ${Math.round(totalDistance * 10) / 10} km — that's ${earthPercent}% around the Earth 🌍`}
         icon="🌍"
         chart={
           <ResponsiveContainer width="100%" height="100%">
@@ -171,385 +181,55 @@ export function StatsGrid(props: StatsGridProps) {
         description={`You've skied the length of Finland ${finlandTimes} times (1160 km)`}
         icon="🇫🇮"
         chart={
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={[{ name: 'Finland', times: parseFloat(finlandTimes) }]}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-              <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" />
-              <YAxis stroke="rgba(255,255,255,0.5)" />
-              <Tooltip 
-                contentStyle={{ 
-                  background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
-                  backdropFilter: 'blur(12px)',
-                  WebkitBackdropFilter: 'blur(12px)',
-                  border: '1px solid rgba(255, 255, 255, 0.07)',
-                  borderRadius: '8px',
-                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
-                }}
-                labelStyle={{ color: '#fff' }}
-                cursor={false}
-              />
-              <Bar dataKey="times" fill="#8b5cf6" radius={[8, 8, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+          <div className="flex flex-col justify-center h-full px-4">
+            <div className="mb-2">
+              <div className="flex justify-between items-center mb-2">
+                <p className="text-xs text-[rgba(255,255,255,0.5)]">Progress to next milestone</p>
+                <p className="text-sm font-semibold text-purple-400">
+                  {((finlandTimesDecimal % 1) * 100).toFixed(0)}%
+                </p>
+              </div>
+              <div className="relative h-3 bg-[rgba(255,255,255,0.05)] rounded-full overflow-hidden">
+                <div
+                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-500 to-purple-600 rounded-full transition-all duration-500"
+                  style={{ width: `${(finlandTimesDecimal % 1) * 100}%` }}
+                />
+              </div>
+              <p className="text-xs text-[rgba(255,255,255,0.4)] mt-1 text-right">
+                {(totalDistance % finlandLength).toFixed(1)} km of {finlandLength} km
+              </p>
+            </div>
+          </div>
         }
       />
 
       {/* Distance: Helsinki → Rovaniemi */}
       <StatPageCard
-        category="Journey"
+        category="Distance"
         title="Helsinki → Rovaniemi"
         value={`${helsinkiRovaniemiTimes}×`}
         description={`You could ski from Helsinki to Rovaniemi ${helsinkiRovaniemiTimes} times (830 km)`}
         icon="🚂"
         chart={
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={[{ name: 'H→R Trips', trips: parseFloat(helsinkiRovaniemiTimes) }]}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-              <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" />
-              <YAxis stroke="rgba(255,255,255,0.5)" />
-              <Tooltip 
-                contentStyle={{ 
-                  background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
-                  backdropFilter: 'blur(12px)',
-                  WebkitBackdropFilter: 'blur(12px)',
-                  border: '1px solid rgba(255, 255, 255, 0.07)',
-                  borderRadius: '8px',
-                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
-                }}
-                labelStyle={{ color: '#fff' }}
-              />
-              <Bar dataKey="trips" fill="#6366f1" radius={[8, 8, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        }
-      />
-
-      {/* Endurance: Marathons with Chart */}
-      <StatPageCard
-        category="Endurance"
-        title="Ski Marathons"
-        value={marathons}
-        description={`That's ${marathons} ski marathons completed!`}
-        icon="🏃"
-        chart={
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={marathonData}
-                cx="50%"
-                cy="50%"
-                innerRadius={40}
-                outerRadius={70}
-                paddingAngle={5}
-                dataKey="value"
-              >
-                {marathonData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.fill} />
-                ))}
-              </Pie>
-              <Tooltip 
-                contentStyle={{ 
-                  background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
-                  backdropFilter: 'blur(12px)',
-                  WebkitBackdropFilter: 'blur(12px)',
-                  border: '1px solid rgba(255, 255, 255, 0.07)',
-                  borderRadius: '8px',
-                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
-                }}
-                labelStyle={{ color: '#fff' }}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-        }
-      />
-
-      {/* Speed with Chart */}
-      <StatPageCard
-        category="Performance"
-        title="Average Speed"
-        value={`${avgSpeed} km/h`}
-        description={`Your average skiing speed across all sessions`}
-        icon="⚡"
-        chart={
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={speedData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(2Distance Per Resort,255,255,0.1)" />
-              <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" />
-              <YAxis stroke="rgba(255,255,255,0.5)" />
-              <Tooltip 
-                contentStyle={{ 
-                  background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
-                  backdropFilter: 'blur(12px)',
-                  WebkitBackdropFilter: 'blur(12px)',
-                  border: '1px solid rgba(255, 255, 255, 0.07)',
-                  borderRadius: '8px',
-                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
-                }}
-                labelStyle={{ color: '#fff' }}
-              />
-              <Bar dataKey="speed" fill="#8b5cf6" radius={[8, 8, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        }
-      />
-
-      {/* Time: Average Day Length */}
-      <StatPageCard
-        category="Time"
-        title="Average Ski Day"
-        value={`${avgDayLength} hours`}
-        description={`Your average ski day lasts ${avgDayLength} hours`}
-        icon="⏱️"
-        chart={
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={[{ name: 'Avg Day', hours: parseFloat(avgDayLength) }]}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-              <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" />
-              <YAxis stroke="rgba(255,255,255,0.5)" />
-              <Tooltip 
-                contentStyle={{ 
-                  background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
-                  backdropFilter: 'blur(12px)',
-                  WebkitBackdropFilter: 'blur(12px)',
-                  border: '1px solid rgba(255, 255, 255, 0.07)',
-                  borderRadius: '8px',
-                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
-                }}
-                labelStyle={{ color: '#fff' }}
-              />
-              <Bar dataKey="hours" fill="#0ea5e9" radius={[8, 8, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        }
-      />
-
-      {/* Time: Workdays */}
-      <StatPageCard
-        category="Time"
-        title="Workday Equivalents"
-        value={`${workdays} days`}
-        description={`You've skied the equivalent of ${workdays} full 8-hour workdays`}
-        icon="💼"
-        chart={
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={workdayData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-              <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" />
-              <YAxis stroke="rgba(255,255,255,0.5)" />
-              <Tooltip 
-                contentStyle={{ 
-                  background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
-                  backdropFilter: 'blur(12px)',
-                  WebkitBackdropFilter: 'blur(12px)',
-                  border: '1px solid rgba(255, 255, 255, 0.07)',
-                  borderRadius: '8px',
-                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
-                }}
-                labelStyle={{ color: '#fff' }}
-              />
-              <Bar dataKey="value" fill="#3b82f6" radius={[8, 8, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        }
-      />
-
-      {/* Time: Non-Stop */}
-      <StatPageCard
-        category="Endurance"
-        title="Non-Stop Skiing"
-        value={`${nonStopDays} days`}
-        description={`If you skied non-stop, you'd be on the slopes for ${nonStopDays} days straight`}
-        icon="🔥"
-        chart={
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={[{ name: 'Non-Stop', days: parseFloat(nonStopDays) }]}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-              <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" />
-              <YAxis stroke="rgba(255,255,255,0.5)" />
-              <Tooltip 
-                contentStyle={{ 
-                  background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
-                  backdropFilter: 'blur(12px)',
-                  WebkitBackdropFilter: 'blur(12px)',
-                  border: '1px solid rgba(255, 255, 255, 0.07)',
-                  borderRadius: '8px',
-                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
-                }}
-                labelStyle={{ color: '#fff' }}
-              />
-              <Bar dataKey="days" fill="#f59e0b" radius={[8, 8, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        }
-      />
-
-      {/* Resorts with Chart */}
-      <StatPageCard
-        category="Exploration"
-        title="Resorts Visited"
-        value={uniqueResorts}
-        description={`You've visited ${uniqueResorts} different ski resorts`}
-        icon="🏔️"
-        chart={
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={resortData}
-                cx="50%"
-                cy="50%"
-                innerRadius={40}
-                outerRadius={70}
-                paddingAngle={5}
-                dataKey="value"
-              >
-                {resortData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.fill} />
-                ))}
-              </Pie>
-              <Tooltip 
-                contentStyle={{ 
-                  background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
-                  backdropFilter: 'blur(12px)',
-                  WebkitBackdropFilter: 'blur(12px)',
-                  border: '1px solid rgba(255, 255, 255, 0.07)',
-                  borderRadius: '8px',
-                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
-                }}
-                labelStyle={{ color: '#fff' }}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-        }
-      />
-
-      {/* Resort Efficiency */}
-      <StatPageCard
-        category="Efficiency"
-        title="Distance Per Resort"
-        value={`${avgDistancePerResort} km`}
-        description={`You average ${avgDistancePerResort} km at each resort`}
-        icon="📊"
-        chart={
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={[{ name: 'Avg per Resort', km: avgDistancePerResort }]}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-              <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" />
-              <YAxis stroke="rgba(255,255,255,0.5)" />
-              <Tooltip 
-                contentStyle={{ 
-                  background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
-                  backdropFilter: 'blur(12px)',
-                  WebkitBackdropFilter: 'blur(12px)',
-                  border: '1px solid rgba(255, 255, 255, 0.07)',
-                  borderRadius: '8px',
-                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
-                }}
-                labelStyle={{ color: '#fff' }}
-              />
-              <Bar dataKey="km" fill="#10b981" radius={[8, 8, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        }
-      />
-
-      {/* Quality: Rating */}
-      <StatPageCard
-        category="Quality"
-        title="Average Rating"
-        value={`${avgRating.toFixed(1)}⭐`}
-        description={`Your average ski day rating`}
-        icon="⭐"
-        chart={
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={ratingData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-              <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" />
-              <YAxis domain={[0, 5]} stroke="rgba(255,255,255,0.5)" />
-              <Tooltip 
-                contentStyle={{ 
-                  background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
-                  backdropFilter: 'blur(12px)',
-                  WebkitBackdropFilter: 'blur(12px)',
-                  border: '1px solid rgba(255, 255, 255, 0.07)',
-                  borderRadius: '8px',
-                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
-                }}
-                labelStyle={{ color: '#fff' }}
-              />
-              <Bar dataKey="value" fill="#fbbf24" radius={[8, 8, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        }
-      />
-
-      {/* Fun: Moon Distance */}
-      <StatPageCard
-        category="Fun Fact"
-        title="Journey to the Moon"
-        value={`${moonPercent}%`}
-        description={`You're ${moonPercent}% of the way to the Moon 🚀 (384,400 km)`}
-        icon="🌙"
-        chart={
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={[
-                  { name: 'Progress', value: parseFloat(moonPercent), fill: '#8b5cf6' },
-                  { name: 'To Go', value: Math.max(0, 100 - parseFloat(moonPercent)), fill: '#1f1f2e' }
-                ]}
-                cx="50%"
-                cy="50%"
-                innerRadius={40}
-                outerRadius={70}
-                paddingAngle={5}
-                dataKey="value"
-              >
-                <Cell key="cell-0" fill="#8b5cf6" />
-                <Cell key="cell-1" fill="#1f1f2e" />
-              </Pie>
-              <Tooltip 
-                contentStyle={{ 
-                  background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
-                  backdropFilter: 'blur(12px)',
-                  WebkitBackdropFilter: 'blur(12px)',
-                  border: '1px solid rgba(255, 255, 255, 0.07)',
-                  borderRadius: '8px',
-                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
-                }}
-                labelStyle={{ color: '#fff' }}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-        }
-      />
-
-      {/* Fun: Calories */}
-      <StatPageCard
-        category="Fun Fact"
-        title="Calories Burned"
-        value={`${pullaBuns} pulla`}
-        description={`You've burned ~${caloriesBurned.toLocaleString()} kcal — about ${pullaBuns} pulla buns 🥐`}
-        icon="🔥"
-        chart={
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={[{ name: 'Pulla Buns', count: pullaBuns }]}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-              <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" />
-              <YAxis stroke="rgba(255,255,255,0.5)" />
-              <Tooltip 
-                contentStyle={{ 
-                  background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
-                  backdropFilter: 'blur(12px)',
-                  WebkitBackdropFilter: 'blur(12px)',
-                  border: '1px solid rgba(255, 255, 255, 0.07)',
-                  borderRadius: '8px',
-                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
-                }}
-                labelStyle={{ color: '#fff' }}
-              />
-              <Bar dataKey="count" fill="#f97316" radius={[8, 8, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+          <div className="flex flex-col justify-center h-full px-4">
+            <div className="mb-2">
+              <div className="flex justify-between items-center mb-2">
+                <p className="text-xs text-[rgba(255,255,255,0.5)]">Progress to next milestone</p>
+                <p className="text-sm font-semibold text-indigo-400">
+                  {((helsinkiRovaniemiTimesDecimal % 1) * 100).toFixed(0)}%
+                </p>
+              </div>
+              <div className="relative h-3 bg-[rgba(255,255,255,0.05)] rounded-full overflow-hidden">
+                <div
+                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-full transition-all duration-500"
+                  style={{ width: `${(helsinkiRovaniemiTimesDecimal % 1) * 100}%` }}
+                />
+              </div>
+              <p className="text-xs text-[rgba(255,255,255,0.4)] mt-1 text-right">
+                {(totalDistance % helsinkiRovaniemiDistance).toFixed(1)} km of {helsinkiRovaniemiDistance} km
+              </p>
+            </div>
+          </div>
         }
       />
 
@@ -588,6 +268,8 @@ export function StatsGrid(props: StatsGridProps) {
                   boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
                 }}
                 labelStyle={{ color: '#fff' }}
+                itemStyle={{ color: '#fff' }}
+                formatter={(value, name) => [`${((Number(value) / 100) * 3500).toFixed(1)} km`, name]}
               />
             </PieChart>
           </ResponsiveContainer>
@@ -603,10 +285,103 @@ export function StatsGrid(props: StatsGridProps) {
         icon="⚡"
         chart={
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={[{ name: 'Efficiency', km: parseFloat(distancePerHour) }]}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-              <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" />
-              <YAxis stroke="rgba(255,255,255,0.5)" />
+            <RadialBarChart 
+              cx="50%" 
+              cy="50%" 
+              innerRadius="60%" 
+              outerRadius="90%" 
+              data={[{ 
+                name: 'Your Speed', 
+                value: parseFloat(distancePerHour), 
+                fill: '#22c55e' 
+              }]}
+              startAngle={180}
+              endAngle={0}
+            >
+              <RadialBar
+                background={{ fill: 'rgba(255,255,255,0.05)' }}
+                dataKey="value"
+                cornerRadius={10}
+              />
+              <Tooltip 
+                contentStyle={{ 
+                  background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
+                  backdropFilter: 'blur(12px)',
+                  WebkitBackdropFilter: 'blur(12px)',
+                  border: '1px solid rgba(255, 255, 255, 0.07)',
+                  borderRadius: '8px',
+                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
+                }}
+                labelStyle={{ display: 'none' }}
+                itemStyle={{ color: '#fff' }}
+                formatter={(value) => [`${(Number(value) / 3.6).toFixed(1)} m/s`, 'Your Speed']}
+              />
+              <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="fill-white text-2xl font-bold">
+                {parseFloat(distancePerHour).toFixed(1)}
+              </text>
+              <text x="50%" y="60%" textAnchor="middle" dominantBaseline="middle" className="fill-gray-400 text-xs">
+                km/h
+              </text>
+            </RadialBarChart>
+          </ResponsiveContainer>
+        }
+      />
+
+      {/* Everest Climbs */}
+      <StatPageCard
+        category="Distance"
+        title="Everest Climbs"
+        value={`${everestClimbs}×`}
+        description={`Your distance equals climbing Everest ${everestClimbs} times (8.848 km height)`}
+        icon="🏔️"
+        chart={
+          <div className="flex flex-col justify-center h-full px-4">
+            <div className="mb-2">
+              <div className="flex justify-between items-center mb-2">
+                <p className="text-xs text-[rgba(255,255,255,0.5)]">Progress to next milestone</p>
+                <p className="text-sm font-semibold text-slate-400">
+                  {((everestClimbsDecimal % 1) * 100).toFixed(0)}%
+                </p>
+              </div>
+              <div className="relative h-3 bg-[rgba(255,255,255,0.05)] rounded-full overflow-hidden">
+                <div
+                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-slate-500 to-slate-600 rounded-full transition-all duration-500"
+                  style={{ width: `${(everestClimbsDecimal % 1) * 100}%` }}
+                />
+              </div>
+              <p className="text-xs text-[rgba(255,255,255,0.4)] mt-1 text-right">
+                {(totalDistance % everestHeight).toFixed(1)} km of {everestHeight} km
+              </p>
+            </div>
+          </div>
+        }
+      />
+
+      {/* Lake Saimaa */}
+      <StatPageCard
+        category="Distance"
+        title="Around Lake Saimaa"
+        value={`${saimaaPercent}%`}
+        description={`You've skied ${saimaaPercent}% around Lake Saimaa shoreline (14,850 km)`}
+        icon="🌊"
+        chart={
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={[
+                  { name: 'Progress', value: parseFloat(saimaaPercent), fill: '#06b6d4' },
+                  { name: 'Remaining', value: Math.max(0, 100 - parseFloat(saimaaPercent)), fill: '#1f1f2e' }
+                ]}
+                cx="50%"
+                cy="50%"
+                innerRadius={40}
+                outerRadius={70}
+                paddingAngle={5}
+                dataKey="value"
+              >
+                <Cell key="cell-0" fill="#06b6d4" />
+                <Cell key="cell-1" fill="#1f1f2e" />
+              </Pie>
               <Tooltip 
                 contentStyle={{ 
                   background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
@@ -617,9 +392,53 @@ export function StatsGrid(props: StatsGridProps) {
                   boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
                 }}
                 labelStyle={{ color: '#fff' }}
+                itemStyle={{ color: '#fff' }}
+                formatter={(value, name) => [`${Number(value).toFixed(1)}%`, name]}
               />
-              <Bar dataKey="km" fill="#22c55e" radius={[8, 8, 0, 0]} />
-            </BarChart>
+            </PieChart>
+          </ResponsiveContainer>
+        }
+      />
+
+      {/* Journey to the Moon */}
+      <StatPageCard
+        category="Distance"
+        title="Journey to the Moon"
+        value={`${moonPercent}%`}
+        description={`You're ${moonPercent}% of the way to the Moon 🚀 (384,400 km)`}
+        icon="🌙"
+        chart={
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={[
+                  { name: 'Progress', value: parseFloat(moonPercent), fill: '#8b5cf6' },
+                  { name: 'To Go', value: Math.max(0, 100 - parseFloat(moonPercent)), fill: '#1f1f2e' }
+                ]}
+                cx="50%"
+                cy="50%"
+                innerRadius={40}
+                outerRadius={70}
+                paddingAngle={5}
+                dataKey="value"
+              >
+                <Cell key="cell-0" fill="#8b5cf6" />
+                <Cell key="cell-1" fill="#1f1f2e" />
+              </Pie>
+              <Tooltip 
+                contentStyle={{ 
+                  background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
+                  backdropFilter: 'blur(12px)',
+                  WebkitBackdropFilter: 'blur(12px)',
+                  border: '1px solid rgba(255, 255, 255, 0.07)',
+                  borderRadius: '8px',
+                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
+                }}
+                labelStyle={{ color: '#fff' }}
+                itemStyle={{ color: '#fff' }}
+                formatter={(value, name) => [`${Number(value).toFixed(1)}%`, name]}
+              />
+            </PieChart>
           </ResponsiveContainer>
         }
       />
@@ -1218,125 +1037,13 @@ export function StatsGrid(props: StatsGridProps) {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-      {/* Everest Climbs */}
-      <StatPageCard
-        category="Fun Fact"
-        title="Everest Climbs"
-        value={`${everestClimbs}×`}
-        description={`Your distance equals climbing Everest ${everestClimbs} times (8.848 km height)`}
-        icon="🏔️"
-        chart={
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={[{ name: 'Climbs', value: everestClimbs }]}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-              <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" />
-              <YAxis stroke="rgba(255,255,255,0.5)" />
-              <Tooltip 
-                contentStyle={{ 
-                  background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
-                  backdropFilter: 'blur(12px)',
-                  WebkitBackdropFilter: 'blur(12px)',
-                  border: '1px solid rgba(255, 255, 255, 0.07)',
-                  borderRadius: '8px',
-                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
-                }}
-                labelStyle={{ color: '#fff' }}
-              />
-              <Bar dataKey="value" fill="#64748b" radius={[8, 8, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        }
-      />
-
-      {/* Lake Saimaa */}
-      <StatPageCard
-        category="Fun Fact"
-        title="Around Lake Saimaa"
-        value={`${saimaaPercent}%`}
-        description={`You've skied ${saimaaPercent}% around Lake Saimaa shoreline (14,850 km)`}
-        icon="🌊"
-        chart={
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={[
-                  { name: 'Progress', value: parseFloat(saimaaPercent), fill: '#06b6d4' },
-                  { name: 'Remaining', value: Math.max(0, 100 - parseFloat(saimaaPercent)), fill: '#1f1f2e' }
-                ]}
-                cx="50%"
-                cy="50%"
-                innerRadius={40}
-                outerRadius={70}
-                paddingAngle={5}
-                dataKey="value"
-              >
-                <Cell key="cell-0" fill="#06b6d4" />
-                <Cell key="cell-1" fill="#1f1f2e" />
-              </Pie>
-              <Tooltip 
-                contentStyle={{ 
-                  background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
-                  backdropFilter: 'blur(12px)',
-                  WebkitBackdropFilter: 'blur(12px)',
-                  border: '1px solid rgba(255, 255, 255, 0.07)',
-                  borderRadius: '8px',
-                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
-                }}
-                labelStyle={{ color: '#fff' }}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-        }
-      />
-
-      {/* Fun: Moon Distance */}
-      <StatPageCard
-        category="Fun Fact"
-        title="Journey to the Moon"
-        value={`${moonPercent}%`}
-        description={`You're ${moonPercent}% of the way to the Moon 🚀 (384,400 km)`}
-        icon="🌙"
-        chart={
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={[
-                  { name: 'Progress', value: parseFloat(moonPercent), fill: '#8b5cf6' },
-                  { name: 'To Go', value: Math.max(0, 100 - parseFloat(moonPercent)), fill: '#1f1f2e' }
-                ]}
-                cx="50%"
-                cy="50%"
-                innerRadius={40}
-                outerRadius={70}
-                paddingAngle={5}
-                dataKey="value"
-              >
-                <Cell key="cell-0" fill="#8b5cf6" />
-                <Cell key="cell-1" fill="#1f1f2e" />
-              </Pie>
-              <Tooltip 
-                contentStyle={{ 
-                  background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
-                  backdropFilter: 'blur(12px)',
-                  WebkitBackdropFilter: 'blur(12px)',
-                  border: '1px solid rgba(255, 255, 255, 0.07)',
-                  borderRadius: '8px',
-                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
-                }}
-                labelStyle={{ color: '#fff' }}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-        }
-      />
-
       {/* Fun: Calories */}
       <StatPageCard
         category="Fun Fact"
         title="Calories Burned"
         value={`${pullaBuns} pulla`}
         description={`You've burned ~${caloriesBurned.toLocaleString()} kcal — about ${pullaBuns} pulla buns 🥐`}
-        icon="�"
+        icon="🔥"
         chart={
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={[{ name: 'Pulla Buns', count: pullaBuns }]}>
@@ -1356,6 +1063,111 @@ export function StatsGrid(props: StatsGridProps) {
               />
               <Bar dataKey="count" fill="#f97316" radius={[8, 8, 0, 0]} />
             </BarChart>
+          </ResponsiveContainer>
+        }
+      />
+
+      {/* Ski Days Per Year */}
+      <StatPageCard
+        category="Fun Fact"
+        title="Ski Addict Level"
+        value={totalDays >= 50 ? "🔥 Obsessed" : totalDays >= 30 ? "😍 Enthusiast" : totalDays >= 15 ? "😊 Regular" : "🎿 Casual"}
+        description={`${totalDays} ski days total — you're a ${totalDays >= 30 ? 'serious' : 'dedicated'} skier!`}
+        icon="⛷️"
+        chart={
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={[{ name: 'Your Days', days: totalDays, threshold: 50 }]}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+              <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" />
+              <YAxis stroke="rgba(255,255,255,0.5)" />
+              <Tooltip 
+                contentStyle={{ 
+                  background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
+                  backdropFilter: 'blur(12px)',
+                  WebkitBackdropFilter: 'blur(12px)',
+                  border: '1px solid rgba(255, 255, 255, 0.07)',
+                  borderRadius: '8px',
+                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
+                }}
+                labelStyle={{ color: '#fff' }}
+              />
+              <Bar dataKey="days" fill="#ec4899" radius={[8, 8, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        }
+      />
+
+      {/* Speed Comparison */}
+      <StatPageCard
+        category="Fun Fact"
+        title="Speed Animal"
+        value={parseFloat(avgSpeed) >= 25 ? "🐆 Cheetah" : parseFloat(avgSpeed) >= 20 ? "🐎 Horse" : parseFloat(avgSpeed) >= 15 ? "🐕 Dog" : "🐢 Turtle"}
+        description={`At ${avgSpeed} km/h, you ski like a ${parseFloat(avgSpeed) >= 20 ? 'speed demon' : 'steady cruiser'}!`}
+        icon="🏃‍♂️"
+        chart={
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={[
+              { name: 'You', speed: parseFloat(avgSpeed), fill: '#8b5cf6' },
+              { name: 'Cheetah', speed: 30, fill: '#64748b' },
+              { name: 'Horse', speed: 20, fill: '#475569' }
+            ]}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+              <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" />
+              <YAxis stroke="rgba(255,255,255,0.5)" />
+              <Tooltip 
+                contentStyle={{ 
+                  background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
+                  backdropFilter: 'blur(12px)',
+                  WebkitBackdropFilter: 'blur(12px)',
+                  border: '1px solid rgba(255, 255, 255, 0.07)',
+                  borderRadius: '8px',
+                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
+                }}
+                labelStyle={{ color: '#fff' }}
+              />
+              <Bar dataKey="speed" fill="#8b5cf6" radius={[8, 8, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        }
+      />
+
+      {/* Resort Explorer Badge */}
+      <StatPageCard
+        category="Fun Fact"
+        title="Explorer Badge"
+        value={uniqueResorts >= 20 ? "🌟 Globetrotter" : uniqueResorts >= 10 ? "🗺️ Adventurer" : uniqueResorts >= 5 ? "🧭 Explorer" : "🏠 Homebody"}
+        description={`${uniqueResorts} resorts visited — ${uniqueResorts >= 10 ? "you love variety!" : "time to explore new slopes!"}`}
+        icon="🎖️"
+        chart={
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={[
+                  { name: 'Visited', value: uniqueResorts, fill: '#10b981' },
+                  { name: 'Many More', value: Math.max(5, 25 - uniqueResorts), fill: '#1f1f2e' }
+                ]}
+                cx="50%"
+                cy="50%"
+                innerRadius={40}
+                outerRadius={70}
+                paddingAngle={5}
+                dataKey="value"
+              >
+                <Cell key="cell-0" fill="#10b981" />
+                <Cell key="cell-1" fill="#1f1f2e" />
+              </Pie>
+              <Tooltip 
+                contentStyle={{ 
+                  background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
+                  backdropFilter: 'blur(12px)',
+                  WebkitBackdropFilter: 'blur(12px)',
+                  border: '1px solid rgba(255, 255, 255, 0.07)',
+                  borderRadius: '8px',
+                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
+                }}
+                labelStyle={{ color: '#fff' }}
+              />
+            </PieChart>
           </ResponsiveContainer>
         }
       />

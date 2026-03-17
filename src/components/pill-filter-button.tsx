@@ -23,7 +23,6 @@ export interface PillNavProps {
   initialLoadAnimation?: boolean;
 }
 
-//TODO Change colors to match rest of the app 
 const PillNav: React.FC<PillNavProps> = ({
   items,
   activeValue,
