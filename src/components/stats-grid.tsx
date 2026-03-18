@@ -1,11 +1,13 @@
 "use client";
 
 import { StatPageCard } from "@/components/stat-page-card";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, RadialBarChart, RadialBar, Legend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, RadialBarChart, RadialBar, Legend, LineChart, Line, ReferenceLine } from 'recharts';
+import type { SkiDay } from "@/types";
 
 export type FilterCategory = 'all' | 'distance' | 'endurance' | 'resort' | 'quality' | 'types' | 'fun';
 
 interface StatsGridProps {
+  skiDays: SkiDay[];
   totalDistance: number;
   totalHours: number;
   totalDays: number;
@@ -39,40 +41,40 @@ interface StatsGridProps {
   activeFilter?: FilterCategory;
 }
 
-export function StatsGrid(props: StatsGridProps) {
-  const {
-    totalDistance,
-    totalDays,
-    earthPercent,
-    finlandTimes,
-    helsinkiRovaniemiTimes,
-    marathons,
-    avgSpeed,
-    avgDayLength,
-    workdays,
-    nonStopDays,
-    uniqueResorts,
-    avgDistancePerResort,
-    avgHoursPerResort,
-    avgRating,
-    moonPercent,
-    caloriesBurned,
-    pullaBuns,
-    tourPercent,
-    everestClimbs,
-    saimaaPercent,
-    bestDay,
-    resortDiscoveryRate,
-    distancePerHour,
-    adventureRatio,
-    favoriteResortName,
-    favoriteResortShare,
-    ratingConsistency,
-    skiTypeDistribution,
-    versatility,
-    activeFilter = 'all'
-  } = props;
-
+export function StatsGrid({
+  skiDays,
+  totalDistance,
+  totalHours,
+  totalDays,
+  avgRating,
+  uniqueResorts,
+  earthPercent,
+  finlandTimes,
+  helsinkiRovaniemiTimes,
+  marathons,
+  avgSpeed,
+  avgDayLength,
+  workdays,
+  nonStopDays,
+  avgDistancePerResort,
+  avgHoursPerResort,
+  moonPercent,
+  caloriesBurned,
+  pullaBuns,
+  tourPercent,
+  everestClimbs,
+  saimaaPercent,
+  bestDay,
+  resortDiscoveryRate,
+  distancePerHour,
+  adventureRatio,
+  favoriteResortName,
+  favoriteResortShare,
+  ratingConsistency,
+  skiTypeDistribution,
+  versatility,
+  activeFilter = 'all'
+}: StatsGridProps) {
   // Chart data
   const marathonData = [
     { name: 'Completed', value: marathons, fill: '#8b5cf6' },
@@ -221,7 +223,7 @@ export function StatsGrid(props: StatsGridProps) {
               </div>
               <div className="relative h-3 bg-[rgba(255,255,255,0.05)] rounded-full overflow-hidden">
                 <div
-                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-full transition-all duration-500"
+                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-500 to-purple-600 rounded-full transition-all duration-500"
                   style={{ width: `${(helsinkiRovaniemiTimesDecimal % 1) * 100}%` }}
                 />
               </div>
@@ -345,7 +347,7 @@ export function StatsGrid(props: StatsGridProps) {
               </div>
               <div className="relative h-3 bg-[rgba(255,255,255,0.05)] rounded-full overflow-hidden">
                 <div
-                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-slate-500 to-slate-600 rounded-full transition-all duration-500"
+                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-500 to-purple-600 rounded-full transition-all duration-500"
                   style={{ width: `${(everestClimbsDecimal % 1) * 100}%` }}
                 />
               </div>
@@ -488,6 +490,8 @@ export function StatsGrid(props: StatsGridProps) {
                   boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
                 }}
                 labelStyle={{ color: '#fff' }}
+                itemStyle={{ color: '#fff' }}
+                formatter={(value, name) => [`${Number(value).toFixed(1)} Km`, name]}
               />
             </PieChart>
           </ResponsiveContainer>
@@ -503,23 +507,76 @@ export function StatsGrid(props: StatsGridProps) {
         icon="💨"
         chart={
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={speedData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-              <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" />
-              <YAxis stroke="rgba(255,255,255,0.5)" />
-              <Tooltip 
-                contentStyle={{ 
-                  background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
-                  backdropFilter: 'blur(12px)',
-                  WebkitBackdropFilter: 'blur(12px)',
-                  border: '1px solid rgba(255, 255, 255, 0.07)',
-                  borderRadius: '8px',
-                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
-                }}
-                labelStyle={{ color: '#fff' }}
+            <LineChart
+              data={(() => {
+                const sortedDays = [...skiDays].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+                const intervals = [];
+                
+                intervals.push({
+                  day: '0',
+                  speed: 0,
+                  date: sortedDays[0]?.date || ''
+                });
+                
+                for (let i = 5; i <= sortedDays.length; i += 5) {
+                  const daysToInclude = sortedDays.slice(0, i);
+                  const totalSpeed = daysToInclude.reduce((sum, d) => {
+                    const speed = (d.distance_km || 0) / (d.hours || 1);
+                    return sum + speed;
+                  }, 0);
+                  const avgSpeed = daysToInclude.length > 0 ? totalSpeed / daysToInclude.length : 0;
+                  
+                  intervals.push({
+                    day: `${i}`,
+                    speed: Number(avgSpeed.toFixed(1)),
+                    date: sortedDays[i - 1]?.date || ''
+                  });
+                }
+                
+                return intervals;
+              })()}
+              margin={{ top: 10, right: 20, left: 0, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+              <XAxis
+                dataKey="day"
+                stroke="#94a3b8"
+                style={{ fontSize: '11px' }}
               />
-              <Bar dataKey="speed" fill="#8b5cf6" radius={[8, 8, 0, 0]} />
-            </BarChart>
+              <YAxis
+                stroke="#94a3b8"
+                style={{ fontSize: '11px' }}
+              />
+              <Tooltip
+                contentStyle={{
+                  background: "linear-gradient(to bottom right, rgba(39, 39, 39, 0.75) 20%, rgba(0, 0, 0, 0.6) 65%)",
+                  backdropFilter: "blur(12px)",
+                  WebkitBackdropFilter: "blur(12px)",
+                  border: "1px solid rgba(255, 255, 255, 0.07)",
+                  borderRadius: "8px",
+                  color: "#f1f5f9",
+                  fontSize: "12px",
+                  boxShadow: "0 6px 16px rgba(0, 0, 0, 0.25)"
+                }}
+                labelStyle={{ color: '#ffffff' }}
+                formatter={(value) => [`${Number(value).toFixed(1)} km/h`, 'Avg Speed']}
+              />
+              <ReferenceLine 
+                y={15} 
+                stroke="#6366f1" 
+                strokeDasharray="3 3" 
+                strokeWidth={2}
+                label={{ value: 'Avg Skier (15 km/h)', position: 'insideTopRight', fill: '#6366f1', fontSize: 10 }}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="speed" 
+                stroke="#8b5cf6" 
+                strokeWidth={2}
+                dot={{ fill: '#8b5cf6', r: 3 }}
+                activeDot={{ r: 5 }}
+              />
+            </LineChart>
           </ResponsiveContainer>
         }
       />
@@ -533,23 +590,66 @@ export function StatsGrid(props: StatsGridProps) {
         icon="⏱️"
         chart={
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={[{ name: 'Avg Day', hours: parseFloat(avgDayLength) }]}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-              <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" />
-              <YAxis stroke="rgba(255,255,255,0.5)" />
-              <Tooltip 
-                contentStyle={{ 
-                  background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
+            <LineChart
+              data={(() => {
+                const sortedDays = [...skiDays].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+                const intervals = [];
+                
+                intervals.push({
+                  day: '0',
+                  hours: 0,
+                  date: sortedDays[0]?.date || ''
+                });
+                
+                for (let i = 5; i <= sortedDays.length; i += 5) {
+                  const daysToInclude = sortedDays.slice(0, i);
+                  const totalHours = daysToInclude.reduce((sum, d) => sum + (d.hours || 0), 0);
+                  const avgHours = daysToInclude.length > 0 ? totalHours / daysToInclude.length : 0;
+                  
+                  intervals.push({
+                    day: `${i}`,
+                    hours: Number(avgHours.toFixed(1)),
+                    date: sortedDays[i - 1]?.date || ''
+                  });
+                }
+                
+                return intervals;
+              })()}
+              margin={{ top: 10, right: 20, left: 0, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+              <XAxis
+                dataKey="day"
+                stroke="#94a3b8"
+                style={{ fontSize: '11px' }}
+              />
+              <YAxis
+                stroke="#94a3b8"
+                style={{ fontSize: '11px' }}
+              />
+              <Tooltip
+                contentStyle={{
+                  background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.75) 20%, rgba(0, 0, 0, 0.6) 65%)',
                   backdropFilter: 'blur(12px)',
                   WebkitBackdropFilter: 'blur(12px)',
                   border: '1px solid rgba(255, 255, 255, 0.07)',
                   borderRadius: '8px',
+                  color: '#f1f5f9',
+                  fontSize: '12px',
                   boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
                 }}
-                labelStyle={{ color: '#fff' }}
+                labelStyle={{ color: '#ffffff' }}
+                formatter={(value) => [`${Number(value).toFixed(1)} hours`, 'Avg Length']}
               />
-              <Bar dataKey="hours" fill="#0ea5e9" radius={[8, 8, 0, 0]} />
-            </BarChart>
+              <Line
+                type="monotone"
+                dataKey="hours"
+                stroke="#0ea5e9"
+                strokeWidth={2}
+                dot={{ fill: '#0ea5e9', r: 3 }}
+                activeDot={{ r: 5 }}
+              />
+            </LineChart>
           </ResponsiveContainer>
         }
       />
@@ -562,25 +662,25 @@ export function StatsGrid(props: StatsGridProps) {
         description={`You've skied the equivalent of ${workdays} full 8-hour workdays`}
         icon="💼"
         chart={
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={workdayData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-              <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" />
-              <YAxis stroke="rgba(255,255,255,0.5)" />
-              <Tooltip 
-                contentStyle={{ 
-                  background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
-                  backdropFilter: 'blur(12px)',
-                  WebkitBackdropFilter: 'blur(12px)',
-                  border: '1px solid rgba(255, 255, 255, 0.07)',
-                  borderRadius: '8px',
-                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
-                }}
-                labelStyle={{ color: '#fff' }}
-              />
-              <Bar dataKey="value" fill="#3b82f6" radius={[8, 8, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+          <div className="flex flex-col justify-center h-full px-4">
+            <div className="mb-2">
+              <div className="flex justify-between items-center mb-2">
+                <p className="text-xs text-[rgba(255,255,255,0.5)]">Progress to next workday</p>
+                <p className="text-sm font-semibold text-blue-400">
+                  {((totalHours % 8) / 8 * 100).toFixed(0)}%
+                </p>
+              </div>
+              <div className="relative h-3 bg-[rgba(255,255,255,0.05)] rounded-full overflow-hidden">
+                <div
+                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-500"
+                  style={{ width: `${(totalHours % 8) / 8 * 100}%` }}
+                />
+              </div>
+              <p className="text-xs text-[rgba(255,255,255,0.4)] mt-1 text-right">
+                {(totalHours % 8).toFixed(1)}h of 8h
+              </p>
+            </div>
+          </div>
         }
       />
 
@@ -593,12 +693,26 @@ export function StatsGrid(props: StatsGridProps) {
         icon="🔥"
         chart={
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={[{ name: 'Non-Stop', days: parseFloat(nonStopDays) }]}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-              <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" />
-              <YAxis stroke="rgba(255,255,255,0.5)" />
-              <Tooltip 
-                contentStyle={{ 
+            <RadialBarChart
+              cx="50%"
+              cy="50%"
+              innerRadius="60%"
+              outerRadius="90%"
+              data={[{
+                name: 'Days',
+                value: (parseFloat(nonStopDays) / 30) * 100,
+                fill: '#f59e0b'
+              }]}
+              startAngle={90}
+              endAngle={-270}
+            >
+              <RadialBar
+                background={{ fill: 'rgba(255,255,255,0.05)' }}
+                dataKey="value"
+                cornerRadius={10}
+              />
+              <Tooltip
+                contentStyle={{
                   background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
                   backdropFilter: 'blur(12px)',
                   WebkitBackdropFilter: 'blur(12px)',
@@ -606,10 +720,17 @@ export function StatsGrid(props: StatsGridProps) {
                   borderRadius: '8px',
                   boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
                 }}
-                labelStyle={{ color: '#fff' }}
+                labelStyle={{ display: 'none' }}
+                itemStyle={{ color: '#fff' }}
+                formatter={() => [`${nonStopDays} days`, 'Non-Stop']}
               />
-              <Bar dataKey="days" fill="#f59e0b" radius={[8, 8, 0, 0]} />
-            </BarChart>
+              <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="fill-white text-2xl font-bold">
+                {nonStopDays}
+              </text>
+              <text x="50%" y="60%" textAnchor="middle" dominantBaseline="middle" className="fill-gray-400 text-xs">
+                days
+              </text>
+            </RadialBarChart>
           </ResponsiveContainer>
         }
       />
