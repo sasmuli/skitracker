@@ -1,11 +1,12 @@
 "use client";
 
 import { StatPageCard } from "@/components/stat-page-card";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, RadialBarChart, RadialBar, Legend, LineChart, Line, ReferenceLine } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, RadialBarChart, RadialBar, Legend, LineChart, Line, ReferenceLine, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
 import type { SkiDay, Resort } from "@/types";
 import { Info, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { SnowflakeRatingDisplay } from '@/components/snowflake-rating-display';
 
 export type FilterCategory = 'all' | 'distance' | 'endurance' | 'resort' | 'quality' | 'types' | 'fun';
 
@@ -906,16 +907,37 @@ export function StatsGrid({
       {/* Hours Per Resort */}
       <StatPageCard
         category="Efficiency"
-        title="Hours Per Resort"
+        title="Top Resorts by Time"
         value={`${avgHoursPerResort}h`}
-        description={`You average ${avgHoursPerResort} hours of skiing at each resort`}
+        description={`Average ${avgHoursPerResort}h per resort`}
         icon="⏰"
         chart={
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={[{ name: 'Avg Hours', hours: parseFloat(avgHoursPerResort) }]}>
+            <BarChart 
+              data={(() => {
+                const resortHours: Record<string, number> = {};
+                skiDays.forEach(day => {
+                  if (day.resort?.name) {
+                    resortHours[day.resort.name] = (resortHours[day.resort.name] || 0) + (day.hours || 0);
+                  }
+                });
+                
+                return Object.entries(resortHours)
+                  .map(([name, hours]) => ({ name, hours: parseFloat(hours.toFixed(1)) }))
+                  .sort((a, b) => b.hours - a.hours);
+              })()}
+              layout="vertical"
+              margin={{ left: 0, right: 10, top: 5, bottom: 5 }}
+            >
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-              <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" />
-              <YAxis stroke="rgba(255,255,255,0.5)" />
+              <XAxis type="number" stroke="rgba(255,255,255,0.5)" />
+              <YAxis 
+                type="category" 
+                dataKey="name" 
+                stroke="rgba(255,255,255,0.5)" 
+                width={80}
+                tick={{ fontSize: 11 }}
+              />
               <Tooltip
                 contentStyle={{
                   background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
@@ -925,9 +947,11 @@ export function StatsGrid({
                   borderRadius: '8px',
                   boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
                 }}
+                cursor={false}
                 labelStyle={{ color: '#fff' }}
+                formatter={(value: number | undefined) => [`${value || 0} hours`, 'Time']}
               />
-              <Bar dataKey="hours" fill="#ec4899" radius={[8, 8, 0, 0]} />
+              <Bar dataKey="hours" fill="#ec4899" radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>
         }
@@ -1049,7 +1073,7 @@ export function StatsGrid({
                   borderRadius: '8px',
                   boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
                 }}
-                cursor={{fill: 'transparent'}}
+                cursor={false}
                 labelStyle={{ color: '#fff' }}
                 formatter={(value: number | undefined) => [`${value || 0} days`, 'Visits']}
               />
@@ -1126,55 +1150,59 @@ export function StatsGrid({
         description={`Your average ski day rating`}
         icon="⭐"
         chart={
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={ratingData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-              <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" />
-              <YAxis domain={[0, 5]} stroke="rgba(255,255,255,0.5)" />
-              <Tooltip 
-                contentStyle={{ 
-                  background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
-                  backdropFilter: 'blur(12px)',
-                  WebkitBackdropFilter: 'blur(12px)',
-                  border: '1px solid rgba(255, 255, 255, 0.07)',
-                  borderRadius: '8px',
-                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
-                }}
-                labelStyle={{ color: '#fff' }}
-              />
-              <Bar dataKey="value" fill="#fbbf24" radius={[8, 8, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+          <div className="flex items-center justify-center h-full">
+            <SnowflakeRatingDisplay 
+              value={avgRating} 
+              max={5}
+            />
+          </div>
         }
       />
 
       {/* Rating Consistency */}
       <StatPageCard
         category="Quality"
-        title="Rating Consistency"
-        value={`${ratingConsistency}%`}
-        description={`${ratingConsistency}% of days rated 4 or higher`}
+        title="Rating Distribution"
+        description=""
         icon="🎯"
         chart={
           <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={[
-                  { name: '4+ Stars', value: parseInt(ratingConsistency), fill: '#eab308' },
-                  { name: 'Below 4', value: Math.max(0, 100 - parseInt(ratingConsistency)), fill: '#1f1f2e' }
-                ]}
-                cx="50%"
-                cy="50%"
-                innerRadius={40}
-                outerRadius={70}
-                paddingAngle={5}
+            <RadarChart
+              outerRadius="85%"
+              data={(() => {
+                const allRatings = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
+                
+                const counts = allRatings.map(rating => 
+                  skiDays.filter(d => d.rating === rating).length
+                );
+                const totalRated = counts.reduce((sum, count) => sum + count, 0);
+                
+                const ratingDist = allRatings.map((rating, index) => {
+                  const percentage = totalRated > 0 ? ((counts[index] / totalRated) * 100) : 0;
+                  return {
+                    subject: `${rating} ⭐`,
+                    value: parseFloat(percentage.toFixed(1)),
+                    fullMark: 100
+                  };
+                });
+                return ratingDist;
+              })()}
+              margin={{ top: 30, right: 30, bottom: 30, left: 30 }}
+            >
+              <PolarGrid stroke="rgba(255,255,255,0.2)" />
+              <PolarAngleAxis 
+                dataKey="subject"
+                tick={{ fill: '#94a3b8', fontSize: 14 }}
+              />
+              <Radar
+                name="Distribution"
                 dataKey="value"
-              >
-                <Cell key="cell-0" fill="#eab308" />
-                <Cell key="cell-1" fill="#1f1f2e" />
-              </Pie>
-              <Tooltip 
-                contentStyle={{ 
+                stroke="#eab308"
+                fill="#eab308"
+                fillOpacity={0.6}
+              />
+              <Tooltip
+                contentStyle={{
                   background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
                   backdropFilter: 'blur(12px)',
                   WebkitBackdropFilter: 'blur(12px)',
@@ -1183,8 +1211,9 @@ export function StatsGrid({
                   boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
                 }}
                 labelStyle={{ color: '#fff' }}
+                formatter={(value) => [`${value}%`, 'Days']}
               />
-            </PieChart>
+            </RadarChart>
           </ResponsiveContainer>
         }
       />
@@ -1192,16 +1221,39 @@ export function StatsGrid({
       {/* Best Single Day */}
       <StatPageCard
         category="Performance"
-        title="Best Single Day"
+        title="Top 10 Ski Days"
         value={`${bestDay} km`}
-        description={`Your longest day covered ${bestDay} km`}
+        description={`Best day: ${bestDay} km`}
         icon="🏆"
         chart={
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={[{ name: 'Best', km: bestDay }]}>
+            <BarChart 
+              data={(() => {
+                const sortedDays = [...skiDays]
+                  .sort((a, b) => (b.distance_km || 0) - (a.distance_km || 0))
+                  .slice(0, 10)
+                  .map((day, index) => ({
+                    name: `#${index + 1}`,
+                    km: day.distance_km || 0,
+                    date: new Date(day.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                    resort: day.resort?.name || 'Unknown'
+                  }))
+                  .reverse();
+                return sortedDays;
+              })()}
+              margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
+            >
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-              <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" />
-              <YAxis stroke="rgba(255,255,255,0.5)" />
+              <XAxis 
+                dataKey="name" 
+                stroke="rgba(255,255,255,0.5)"
+                style={{ fontSize: '11px' }}
+              />
+              <YAxis 
+                stroke="rgba(255,255,255,0.5)"
+                style={{ fontSize: '11px' }}
+                label={{ value: 'km', angle: -90, position: 'insideLeft', fill: '#94a3b8', fontSize: 11 }}
+              />
               <Tooltip 
                 contentStyle={{ 
                   background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
@@ -1211,9 +1263,14 @@ export function StatsGrid({
                   borderRadius: '8px',
                   boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
                 }}
+                cursor={false}
                 labelStyle={{ color: '#fff' }}
+                formatter={(value, name, props) => [
+                  `${value} km`,
+                  `${props.payload.date} - ${props.payload.resort}`
+                ]}
               />
-              <Bar dataKey="km" fill="#d946ef" radius={[8, 8, 0, 0]} />
+              <Bar dataKey="km" fill="#d946ef" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         }
