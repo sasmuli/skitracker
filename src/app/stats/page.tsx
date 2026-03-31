@@ -1,5 +1,5 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server-client";
-import { getSkiDays, getCurrentUserWithProfile, getSkiDayStats } from "@/lib/queries";
+import { getSkiDays, getCurrentUserWithProfile, getSkiDayStats, getResorts } from "@/lib/queries";
 import { StatsPageWrapper } from "@/components/stats-page-wrapper";
 
 export default async function StatsPage() {
@@ -15,6 +15,7 @@ export default async function StatsPage() {
   }
   
   const skiDays = await getSkiDays(supabase, user.id);
+  const allResorts = await getResorts(supabase);
   const stats = getSkiDayStats(skiDays);
   
   // Calculate all statistics
@@ -70,8 +71,7 @@ export default async function StatsPage() {
   // Distance per hour efficiency
   const distancePerHour = totalHours > 0 ? (totalDistance / totalHours).toFixed(1) : '0';
   
-  // Adventure ratio
-  const adventureRatio = totalDays > 0 ? (uniqueResorts / totalDays).toFixed(2) : '0';
+  const adventureRatio = totalDays > 0 ? Math.min((uniqueResorts / totalDays) * 10, 1.0).toFixed(2) : '0';
   
   // Favorite resort share
   const resortCounts = skiDays.reduce((acc, day) => {
@@ -128,6 +128,7 @@ export default async function StatsPage() {
       <div className="max-w-7xl mx-auto">
         <StatsPageWrapper
           skiDays={skiDays}
+          allResorts={allResorts}
           totalDistance={totalDistance}
           totalHours={totalHours}
           totalDays={totalDays}

@@ -3,12 +3,13 @@
 import { useState } from 'react';
 import PillNav from '@/components/pill-filter-button';
 import { StatsGrid } from '@/components/stats-grid';
-import type { SkiDay } from "@/types";
+import type { SkiDay, Resort } from "@/types";
 
 export type FilterCategory = 'all' | 'distance' | 'endurance' | 'resort' | 'quality' | 'types' | 'fun';
 
 interface StatsPageWrapperProps {
   skiDays: SkiDay[];
+  allResorts: Resort[];
   totalDistance: number;
   totalHours: number;
   totalDays: number;
@@ -76,6 +77,7 @@ export function StatsPageWrapper(props: StatsPageWrapperProps) {
 
       <StatsGrid
         {...props}
+        allResorts={props.allResorts}
         activeFilter={activeFilter}
       />
     </>

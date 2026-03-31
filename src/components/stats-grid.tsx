@@ -2,12 +2,16 @@
 
 import { StatPageCard } from "@/components/stat-page-card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, RadialBarChart, RadialBar, Legend, LineChart, Line, ReferenceLine } from 'recharts';
-import type { SkiDay } from "@/types";
+import type { SkiDay, Resort } from "@/types";
+import { Info, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 export type FilterCategory = 'all' | 'distance' | 'endurance' | 'resort' | 'quality' | 'types' | 'fun';
 
 interface StatsGridProps {
   skiDays: SkiDay[];
+  allResorts: Resort[];
   totalDistance: number;
   totalHours: number;
   totalDays: number;
@@ -43,6 +47,7 @@ interface StatsGridProps {
 
 export function StatsGrid({
   skiDays,
+  allResorts,
   totalDistance,
   totalHours,
   totalDays,
@@ -75,6 +80,18 @@ export function StatsGrid({
   versatility,
   activeFilter = 'all'
 }: StatsGridProps) {
+  const [showUnvisitedDialog, setShowUnvisitedDialog] = useState(false);
+  const [showAdventureRatioDialog, setShowAdventureRatioDialog] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Get visited resorts
+  const visitedResortNames = new Set(skiDays.map(d => d.resort?.name).filter(Boolean));
+  const unvisitedResorts = allResorts.filter((r: Resort) => !visitedResortNames.has(r.name));
+  
   // Chart data
   const marathonData = [
     { name: 'Completed', value: marathons, fill: '#8b5cf6' },
@@ -88,7 +105,7 @@ export function StatsGrid({
   
   const resortData = [
     { name: 'Visited', value: uniqueResorts, fill: '#8b5cf6' },
-    { name: 'To Explore', value: Math.max(1, 20 - uniqueResorts), fill: '#1f1f2e' }
+    { name: 'To Explore', value: Math.max(0, allResorts.length - uniqueResorts), fill: '#1f1f2e' }
   ];
 
   const earthData = [
@@ -124,6 +141,7 @@ export function StatsGrid({
   };
 
   return (
+    <>
     <div className="space-y-12">
       
       {/* DISTANCE SECTION */}
@@ -748,6 +766,15 @@ export function StatsGrid({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
       {/* Resorts with Chart */}
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => setShowUnvisitedDialog(true)}
+          className="ski-info-trigger absolute top-6 right-16 z-10"
+          aria-label="View unvisited resorts"
+        >
+          <Info className="w-4 h-4" />
+        </button>
       <StatPageCard
         category="Exploration"
         title="Resorts Visited"
@@ -780,11 +807,18 @@ export function StatsGrid({
                   boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
                 }}
                 labelStyle={{ color: '#fff' }}
+                itemStyle={{ color: '#fff' }}
+                formatter={(value, name) => {
+                  const total = resortData.reduce((sum, item) => sum + item.value, 0);
+                  const percentage = ((Number(value) / total) * 100).toFixed(1);
+                  return [`${value} (${percentage}%)`, name];
+                }}
               />
             </PieChart>
           </ResponsiveContainer>
         }
       />
+      </div>
 
       {/* Resort Efficiency */}
       <StatPageCard
@@ -795,23 +829,76 @@ export function StatsGrid({
         icon="📊"
         chart={
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={[{ name: 'Avg', km: avgDistancePerResort }]}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-              <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" />
-              <YAxis stroke="rgba(255,255,255,0.5)" />
-              <Tooltip 
-                contentStyle={{ 
-                  background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
+            <LineChart
+              data={(() => {
+                const sortedDays = [...skiDays].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+                const intervals = [];
+                
+                intervals.push({
+                  day: '0',
+                  resorts: 0,
+                  avgDistance: 0
+                });
+                
+                for (let i = 5; i <= sortedDays.length; i += 5) {
+                  const daysToInclude = sortedDays.slice(0, i);
+                  const uniqueResortSet = new Set(daysToInclude.map(d => d.resort?.name).filter(Boolean));
+                  const totalDistance = daysToInclude.reduce((sum, d) => sum + (d.distance_km || 0), 0);
+                  const avgKmPerResort = uniqueResortSet.size > 0 ? totalDistance / uniqueResortSet.size : 0;
+                  
+                  intervals.push({
+                    day: `${i}`,
+                    resorts: uniqueResortSet.size,
+                    avgDistance: Number(avgKmPerResort.toFixed(1))
+                  });
+                }
+                
+                return intervals;
+              })()}
+              margin={{ top: 10, right: 20, left: 0, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+              <XAxis
+                dataKey="day"
+                stroke="#94a3b8"
+                style={{ fontSize: '11px' }}
+              />
+              <YAxis
+                stroke="#94a3b8"
+                style={{ fontSize: '11px' }}
+              />
+              <Tooltip
+                contentStyle={{
+                  background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.75) 20%, rgba(0, 0, 0, 0.6) 65%)',
                   backdropFilter: 'blur(12px)',
                   WebkitBackdropFilter: 'blur(12px)',
                   border: '1px solid rgba(255, 255, 255, 0.07)',
                   borderRadius: '8px',
+                  color: '#f1f5f9',
+                  fontSize: '12px',
                   boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
                 }}
-                labelStyle={{ color: '#fff' }}
+                labelStyle={{ color: '#ffffff' }}
               />
-              <Bar dataKey="km" fill="#10b981" radius={[8, 8, 0, 0]} />
-            </BarChart>
+              <Line
+                type="monotone"
+                dataKey="resorts"
+                stroke="#ef4444"
+                strokeWidth={2}
+                dot={{ fill: '#ef4444', r: 3 }}
+                activeDot={{ r: 5 }}
+                name="Resorts Visited"
+              />
+              <Line
+                type="monotone"
+                dataKey="avgDistance"
+                stroke="#a855f7"
+                strokeWidth={2}
+                dot={{ fill: '#a855f7', r: 3 }}
+                activeDot={{ r: 5 }}
+                name="Avg Distance (km)"
+              />
+            </LineChart>
           </ResponsiveContainer>
         }
       />
@@ -829,8 +916,8 @@ export function StatsGrid({
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
               <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" />
               <YAxis stroke="rgba(255,255,255,0.5)" />
-              <Tooltip 
-                contentStyle={{ 
+              <Tooltip
+                contentStyle={{
                   background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
                   backdropFilter: 'blur(12px)',
                   WebkitBackdropFilter: 'blur(12px)',
@@ -855,23 +942,67 @@ export function StatsGrid({
         icon="🗺️"
         chart={
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={[{ name: 'Discovery', days: parseFloat(resortDiscoveryRate) }]}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-              <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" />
-              <YAxis stroke="rgba(255,255,255,0.5)" />
-              <Tooltip 
-                contentStyle={{ 
-                  background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
+            <LineChart
+              data={(() => {
+                const sortedDays = [...skiDays].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+                const discoveryData = [];
+                const seenResorts = new Set();
+                
+                discoveryData.push({
+                  day: 0,
+                  resorts: 0
+                });
+
+                sortedDays.forEach((day, index) => {
+                  if (day.resort?.name && !seenResorts.has(day.resort.name)) {
+                    seenResorts.add(day.resort.name);
+                    discoveryData.push({
+                      day: index + 1,
+                      resorts: seenResorts.size
+                    });
+                  }
+                });
+
+                return discoveryData;
+              })()}
+              margin={{ top: 10, right: 20, left: 0, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+              <XAxis
+                dataKey="day"
+                stroke="#94a3b8"
+                style={{ fontSize: '11px' }}
+                label={{ value: 'Ski Days', position: 'insideBottom', offset: -5, fill: '#94a3b8', fontSize: 11 }}
+              />
+              <YAxis
+                stroke="#94a3b8"
+                style={{ fontSize: '11px' }}
+                label={{ value: 'Resorts', angle: -90, position: 'insideLeft', fill: '#94a3b8', fontSize: 11 }}
+              />
+              <Tooltip
+                contentStyle={{
+                  background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.75) 20%, rgba(0, 0, 0, 0.6) 65%)',
                   backdropFilter: 'blur(12px)',
                   WebkitBackdropFilter: 'blur(12px)',
                   border: '1px solid rgba(255, 255, 255, 0.07)',
                   borderRadius: '8px',
+                  color: '#f1f5f9',
+                  fontSize: '12px',
                   boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
                 }}
-                labelStyle={{ color: '#fff' }}
+                labelStyle={{ color: '#ffffff' }}
+                labelFormatter={(value) => `Day: ${value}`}
+                formatter={(value) => [`${value} resorts`, 'Discovered']}
               />
-              <Bar dataKey="days" fill="#14b8a6" radius={[8, 8, 0, 0]} />
-            </BarChart>
+              <Line
+                type="stepAfter"
+                dataKey="resorts"
+                stroke="#14b8a6"
+                strokeWidth={2}
+                dot={{ fill: '#14b8a6', r: 4 }}
+                activeDot={{ r: 6 }}
+              />
+            </LineChart>
           </ResponsiveContainer>
         }
       />
@@ -879,28 +1010,36 @@ export function StatsGrid({
       {/* Favorite Resort Share */}
       <StatPageCard
         category="Exploration"
-        title="Favorite Resort"
-        value={`${favoriteResortShare}%`}
-        description={`${favoriteResortShare}% of all your skiing happened at ${favoriteResortName}`}
+        title="All Resorts Visited"
+        value={`${uniqueResorts}`}
+        description={`${favoriteResortName} is your favorite with ${favoriteResortShare}% of days`}
         icon="❤️"
         chart={
           <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={[
-                  { name: favoriteResortName, value: parseInt(favoriteResortShare), fill: '#ef4444' },
-                  { name: 'Others', value: Math.max(0, 100 - parseInt(favoriteResortShare)), fill: '#1f1f2e' }
-                ]}
-                cx="50%"
-                cy="50%"
-                innerRadius={40}
-                outerRadius={70}
-                paddingAngle={5}
-                dataKey="value"
-              >
-                <Cell key="cell-0" fill="#ef4444" />
-                <Cell key="cell-1" fill="#1f1f2e" />
-              </Pie>
+            <BarChart 
+              data={(() => {
+                const resortCounts: Record<string, number> = {};
+                skiDays.forEach(day => {
+                  if (day.resort?.name) {
+                    resortCounts[day.resort.name] = (resortCounts[day.resort.name] || 0) + 1;
+                  }
+                });
+                return Object.entries(resortCounts)
+                  .map(([name, count]) => ({ name, days: count }))
+                  .sort((a, b) => b.days - a.days);
+              })()}
+              layout="vertical"
+              margin={{ left: 0, right: 10, top: 5, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+              <XAxis type="number" stroke="rgba(255,255,255,0.5)" />
+              <YAxis 
+                type="category" 
+                dataKey="name" 
+                stroke="rgba(255,255,255,0.5)" 
+                width={80}
+                tick={{ fontSize: 11 }}
+              />
               <Tooltip 
                 contentStyle={{ 
                   background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
@@ -910,14 +1049,26 @@ export function StatsGrid({
                   borderRadius: '8px',
                   boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
                 }}
+                cursor={{fill: 'transparent'}}
                 labelStyle={{ color: '#fff' }}
+                formatter={(value: number | undefined) => [`${value || 0} days`, 'Visits']}
               />
-            </PieChart>
+              <Bar dataKey="days" fill="#0ea5e9" radius={[0, 4, 4, 0]} />
+            </BarChart>
           </ResponsiveContainer>
         }
       />
 
       {/* Adventure Ratio */}
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => setShowAdventureRatioDialog(true)}
+          className="ski-info-trigger absolute top-6 right-16 z-10"
+          aria-label="Learn about Adventure Ratio"
+        >
+          <Info className="w-4 h-4" />
+        </button>
       <StatPageCard
         category="Exploration"
         title="Adventure Ratio"
@@ -925,27 +1076,35 @@ export function StatsGrid({
         description={`${adventureRatio} resorts per ski day - higher means you explore new places often`}
         icon="🧭"
         chart={
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={[{ name: 'Ratio', value: parseFloat(adventureRatio) }]}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-              <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" />
-              <YAxis stroke="rgba(255,255,255,0.5)" domain={[0, 1]} />
-              <Tooltip 
-                contentStyle={{ 
-                  background: 'linear-gradient(to bottom right, rgba(39, 39, 39, 0.95) 20%, rgba(0, 0, 0, 0.9) 65%)',
-                  backdropFilter: 'blur(12px)',
-                  WebkitBackdropFilter: 'blur(12px)',
-                  border: '1px solid rgba(255, 255, 255, 0.07)',
-                  borderRadius: '8px',
-                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25)'
-                }}
-                labelStyle={{ color: '#fff' }}
-              />
-              <Bar dataKey="value" fill="#a855f7" radius={[8, 8, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+          <div className="flex flex-col justify-center h-full px-4">
+            <div className="text-center mb-4">
+              <div className="text-5xl font-bold text-purple-400 mb-2">{adventureRatio}</div>
+              <div className="text-sm text-gray-400">
+                {parseFloat(adventureRatio) >= 0.8 
+                  ? '🌟 Explorer!' 
+                  : parseFloat(adventureRatio) >= 0.4
+                  ? '⚖️ Adventurous'
+                  : parseFloat(adventureRatio) >= 0.2
+                  ? '🏔️ Balanced'
+                  : '🎿 Home Mountain'}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between text-xs text-gray-400">
+                <span>Exploration Level</span>
+                <span>{Math.min(Math.round(parseFloat(adventureRatio) * 100), 100)}%</span>
+              </div>
+              <div className="relative h-4 bg-[rgba(255,255,255,0.05)] rounded-full overflow-hidden">
+                <div
+                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-500 to-purple-600 rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min(parseFloat(adventureRatio) * 100, 100)}%` }}
+                />
+              </div>
+            </div>
+          </div>
         }
       />
+      </div>
 
         </div>
       </div>
@@ -1298,5 +1457,102 @@ export function StatsGrid({
       )}
 
     </div>
+
+    {mounted && showUnvisitedDialog && createPortal(
+      <div className="ski-info-overlay" onClick={() => setShowUnvisitedDialog(false)}>
+        <div className="ski-info-dialog" onClick={(e) => e.stopPropagation()}>
+          <div className="ski-info-header">
+            <h3 className="ski-info-title">Resorts to Explore</h3>
+            <button
+              type="button"
+              onClick={() => setShowUnvisitedDialog(false)}
+              className="ski-info-close"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          <div className="ski-info-content">
+            {unvisitedResorts.length > 0 ? (
+              <ul className="space-y-3">
+                {unvisitedResorts.map((resort: Resort) => (
+                  <li key={resort.id} className="border-b border-white/10 pb-3 last:border-0">
+                    <div className="font-medium text-white">{resort.name}</div>
+                    {(resort.location_city || resort.location_country) && (
+                      <div className="text-sm text-gray-400 mt-1">
+                        {[resort.location_city, resort.location_country].filter(Boolean).join(', ')}
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-gray-400">You've visited all resorts in the database! 🎉</p>
+            )}
+          </div>
+        </div>
+      </div>,
+      document.body
+    )}
+
+    {mounted && showAdventureRatioDialog && createPortal(
+      <div className="ski-info-overlay" onClick={() => setShowAdventureRatioDialog(false)}>
+        <div className="ski-info-dialog" onClick={(e) => e.stopPropagation()}>
+          <div className="ski-info-header">
+            <h3 className="ski-info-title">Adventure Ratio Explained</h3>
+            <button
+              type="button"
+              onClick={() => setShowAdventureRatioDialog(false)}
+              className="ski-info-close"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          <div className="ski-info-content">
+            <div className="space-y-4 text-sm">
+              <div>
+                <h4 className="font-semibold text-white mb-2">What is Adventure Ratio?</h4>
+                <p className="text-gray-300">
+                  Adventure Ratio measures how often you explore new resorts. The scale is capped at 1.0 (maximum exploration), 
+                  which represents discovering a new resort every 10 ski days or less.
+                </p>
+              </div>
+
+              <div>
+                <h4 className="font-semibold text-white mb-2">How to interpret it:</h4>
+                <ul className="space-y-2 text-gray-300">
+                  <li><span className="text-purple-400 font-semibold">1.0</span> - New resort every 10 days or less (maximum!)</li>
+                  <li><span className="text-purple-400 font-semibold">0.5</span> - New resort every 20 ski days</li>
+                  <li><span className="text-purple-400 font-semibold">0.3</span> - New resort every ~33 ski days</li>
+                  <li><span className="text-purple-400 font-semibold">0.2</span> - New resort every 50 ski days</li>
+                  <li><span className="text-purple-400 font-semibold">0.1</span> - New resort every 100 ski days</li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 className="font-semibold text-white mb-2">Your Status:</h4>
+                <p className="text-gray-300">
+                  {parseFloat(adventureRatio) >= 0.8 
+                    ? "🌟 Explorer! You love discovering new mountains every few ski days."
+                    : parseFloat(adventureRatio) >= 0.4
+                    ? "⚖️ Adventurous - You regularly seek out new resorts to explore."
+                    : parseFloat(adventureRatio) >= 0.2
+                    ? "🏔️ Balanced - You enjoy both exploring and returning to favorite spots."
+                    : "🎿 Home Mountain Devotee - You know your favorite resorts like the back of your hand!"
+                  }
+                </p>
+              </div>
+
+              <div className="bg-white/5 rounded-lg p-3 border border-white/10">
+                <p className="text-xs text-gray-400">
+                  <strong>Your ratio:</strong> {adventureRatio} ({uniqueResorts} resorts ÷ {totalDays} ski days)
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>,
+      document.body
+    )}
+    </>
   );
 }
